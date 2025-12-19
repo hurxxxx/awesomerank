@@ -1,0 +1,73 @@
+.landing-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.title-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.main-title {
+    font-size: 4rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.year-badge {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    background: var(--primary-color);
+    color: #000;
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transform: rotate(10deg);
+    box-shadow: var(--primary-glow);
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    margin-bottom: 4rem;
+    line-height: 1.4;
+}
+
+.btn-primary {
+    --primary-glow-strong: rgba(0, 240, 255, 0.6);
+    background: var(--primary-color);
+    color: #000;
+    font-weight: 700;
+    font-size: 1.2rem;
+    padding: 1.2rem 4rem;
+    border-radius: 100px;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.decor-circle {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    pointer-events: none;
+}

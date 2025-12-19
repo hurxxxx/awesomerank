@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap');
+
+:root {
+  --bg-color: #030305;
+  --surface-color: #0e0e12;
+  --text-primary: #ffffff;
+  --text-secondary: #8b8b9e;
+  
+  --primary-color: #00f0ff; /* Neon Cyan */
+  --primary-glow: 0 0 20px rgba(0, 240, 255, 0.4);
+  
+  --secondary-color: #7000ff; /* Deep Violet */
+  
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  
+  --font-main: 'Outfit', sans-serif;
+  
+  --transition-fast: 0.2s ease;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: var(--font-main);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+#root {
+  width: 100%;
+  max-width: 480px; /* Mobile focused */
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Utility for glass morphism */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+}
