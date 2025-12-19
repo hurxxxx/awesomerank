@@ -13,7 +13,7 @@ export const Quiz = ({ onFinish }: QuizProps) => {
     const [index, setIndex] = useState(0);
     const [answers, setAnswers] = useState<boolean[]>([]);
     const [questionTimes, setQuestionTimes] = useState<number[]>([]);
-    const questionStartTime = useRef<number>(Date.now());
+    const questionStartTime = useRef<number>(0);
 
     // Reset timer when question changes
     useEffect(() => {
@@ -21,8 +21,13 @@ export const Quiz = ({ onFinish }: QuizProps) => {
     }, [index]);
 
     const handleAnswer = (answer: boolean) => {
+        const now = Date.now();
+        if (questionStartTime.current === 0) {
+            questionStartTime.current = now;
+        }
+
         // Calculate time spent on this question
-        const timeSpent = Date.now() - questionStartTime.current;
+        const timeSpent = now - questionStartTime.current;
         const newTimes = [...questionTimes, timeSpent];
         setQuestionTimes(newTimes);
 

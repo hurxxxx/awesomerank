@@ -1,22 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-
-export type ConsentStatus = 'pending' | 'accepted' | 'rejected';
-
-export interface ConsentState {
-  status: ConsentStatus;
-  timestamp: string | null;
-  region: string | null; // EU, US, KR, BR, JP, OTHER
-}
-
-interface ConsentContextType {
-  consent: ConsentState;
-  isConsentRequired: boolean;
-  isOptInRegion: boolean;
-  acceptConsent: () => void;
-  rejectConsent: () => void;
-  resetConsent: () => void;
-  canCollectData: () => boolean;
-}
+import { useState, useCallback, type ReactNode } from 'react';
+import type { ConsentState } from './consentTypes';
+import { ConsentContext } from './ConsentContextValue';
 
 const CONSENT_STORAGE_KEY = 'world-rank-consent';
 
@@ -25,16 +9,6 @@ const OPT_IN_REGIONS = ['EU', 'KR', 'BR'];
 
 // Regions that use opt-out model (data collection allowed unless user opts out)
 const OPT_OUT_REGIONS = ['US', 'JP'];
-
-const ConsentContext = createContext<ConsentContextType | null>(null);
-
-export function useConsent() {
-  const context = useContext(ConsentContext);
-  if (!context) {
-    throw new Error('useConsent must be used within a ConsentProvider');
-  }
-  return context;
-}
 
 function getStoredConsent(): ConsentState | null {
   try {
@@ -144,29 +118,24 @@ export function ConsentProvider({ children }: ConsentProviderProps) {
   const [consent, setConsent] = useState<ConsentState>(() => {
     const stored = getStoredConsent();
     if (stored) {
-      return stored;
+      return {
+        status: stored.status ?? 'pending',
+        timestamp: stored.timestamp ?? null,
+        region: stored.region ?? detectRegion(),
+      };
     }
+    const region = detectRegion();
     return {
       status: 'pending',
       timestamp: null,
-      region: null
+      region
     };
   });
 
-  const [detectedRegion, setDetectedRegion] = useState<string>('OTHER');
+  const region = consent.region ?? 'OTHER';
 
-  useEffect(() => {
-    const region = detectRegion();
-    setDetectedRegion(region);
-
-    // Update consent with detected region if not already set
-    if (!consent.region) {
-      setConsent(prev => ({ ...prev, region }));
-    }
-  }, []);
-
-  const isOptInRegion = OPT_IN_REGIONS.includes(detectedRegion);
-  const isOptOutRegion = OPT_OUT_REGIONS.includes(detectedRegion);
+  const isOptInRegion = OPT_IN_REGIONS.includes(region);
+  const isOptOutRegion = OPT_OUT_REGIONS.includes(region);
 
   // Consent banner is required in all regions, but behavior differs
   const isConsentRequired = consent.status === 'pending';
@@ -175,30 +144,30 @@ export function ConsentProvider({ children }: ConsentProviderProps) {
     const newConsent: ConsentState = {
       status: 'accepted',
       timestamp: new Date().toISOString(),
-      region: detectedRegion
+      region
     };
     setConsent(newConsent);
     storeConsent(newConsent);
-  }, [detectedRegion]);
+  }, [region]);
 
   const rejectConsent = useCallback(() => {
     const newConsent: ConsentState = {
       status: 'rejected',
       timestamp: new Date().toISOString(),
-      region: detectedRegion
+      region
     };
     setConsent(newConsent);
     storeConsent(newConsent);
-  }, [detectedRegion]);
+  }, [region]);
 
   const resetConsent = useCallback(() => {
     clearStoredConsent();
     setConsent({
       status: 'pending',
       timestamp: null,
-      region: detectedRegion
+      region
     });
-  }, [detectedRegion]);
+  }, [region]);
 
   // Determine if data collection is allowed based on region and consent
   const canCollectData = useCallback(() => {

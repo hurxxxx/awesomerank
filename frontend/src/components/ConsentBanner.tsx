@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useConsent } from '../contexts/ConsentContext';
+import { useConsent } from '../contexts/useConsent';
 import './ConsentBanner.css';
 
 export function ConsentBanner() {

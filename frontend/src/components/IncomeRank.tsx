@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { IncomeBasis } from '../data/worldIncomeThresholds';
 import { WORLD_INCOME_THRESHOLDS_USD, WORLD_INCOME_WID } from '../data/worldIncomeThresholds';
@@ -27,17 +27,19 @@ export function IncomeRank() {
   const { t, i18n } = useTranslation();
   const [basis, setBasis] = useState<IncomeBasis>('PPP');
   const [incomeText, setIncomeText] = useState('');
+  const [submittedIncome, setSubmittedIncome] = useState<number | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const thresholds = WORLD_INCOME_THRESHOLDS_USD[basis];
 
-  const income = useMemo(() => parseIncomeInput(incomeText), [incomeText]);
   const percentile = useMemo(
-    () => (income === null ? null : percentileFromIncome(income, thresholds)),
-    [income, thresholds]
+    () => (submittedIncome === null ? null : percentileFromIncome(submittedIncome, thresholds)),
+    [submittedIncome, thresholds]
   );
   const topPercent = useMemo(
-    () => (income === null ? null : topPercentFromIncome(income, thresholds)),
-    [income, thresholds]
+    () => (submittedIncome === null ? null : topPercentFromIncome(submittedIncome, thresholds)),
+    [submittedIncome, thresholds]
   );
 
   const topPeople = useMemo(() => {
@@ -85,6 +87,30 @@ export function IncomeRank() {
     };
   }, [thresholds]);
 
+  const handleCheck = () => {
+    const val = parseIncomeInput(incomeText);
+    if (val === null) return;
+
+    setIsCalculating(true);
+    setSubmittedIncome(null);
+
+    // Simulate calculation delay for effect
+    setTimeout(() => {
+      setSubmittedIncome(val);
+      setIsCalculating(false);
+      // Wait for re-render then scroll
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }, 800);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleCheck();
+    }
+  };
+
   const basisLabel = basis === 'PPP' ? t('PPP (cost of living adjusted)') : t('Market exchange rate (MER)');
   const worldCode = WORLD_INCOME_WID.countryCodeByBasis[basis];
   const source = WORLD_INCOME_WID.sourceFileByBasis[basis];
@@ -126,18 +152,28 @@ export function IncomeRank() {
             <label className="income-label" htmlFor="income-input">
               {t('Annual income')} <span className="income-hint">{t('USD')}</span>
             </label>
-            <div className="income-input-wrap">
-              <span className="income-prefix">$</span>
-              <input
-                id="income-input"
-                className="income-input"
-                inputMode="decimal"
-                autoComplete="off"
-                placeholder={t('Example: 50,000')}
-                value={incomeText}
-                onChange={(e) => setIncomeText(e.target.value)}
-                aria-label={t('Annual income')}
-              />
+            <div className="income-input-group">
+              <div className="income-input-wrap">
+                <span className="income-prefix">$</span>
+                <input
+                  id="income-input"
+                  className="income-input"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  placeholder={t('Example: 50,000')}
+                  value={incomeText}
+                  onChange={(e) => setIncomeText(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  aria-label={t('Annual income')}
+                />
+              </div>
+              <button
+                className="income-check-btn"
+                onClick={handleCheck}
+                disabled={!incomeText || isCalculating}
+              >
+                {isCalculating ? t('Calculating...') : t('Check Rank')}
+              </button>
             </div>
           </div>
 
@@ -169,73 +205,97 @@ export function IncomeRank() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.24 }}
+          ref={resultRef}
         >
-          {topLabel ? (
-            <>
-              <div className="result-topline">
-                <div className="result-copy">
-                  <h2 className="result-title">{t('You are in the top')}</h2>
-                  <p className="result-caption">
-                    <span className="result-meta">
-                      {t('Richer than')} {richerThanLabel}
-                    </span>
-                    <span className="result-meta-dot">•</span>
-                    <span className="result-meta">{basisLabel}</span>
-                  </p>
-                </div>
-                <div className="result-stamp" aria-label={t('Income rank result')}>
-                  <div className="stamp-inner">
-                    <div className="stamp-top">{t('TOP')}</div>
-                    <div className="stamp-value">{topLabel}</div>
+          <AnimatePresence mode="wait">
+            {isCalculating ? (
+              <motion.div
+                key="loading"
+                className="result-loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="loading-spinner"></div>
+                <div className="loading-text">{t('Analyzing global data...')}</div>
+              </motion.div>
+            ) : topLabel ? (
+              <motion.div
+                key="result"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className="result-topline">
+                  <div className="result-copy">
+                    <h2 className="result-title">{t('You are in the top')}</h2>
+                    <p className="result-caption">
+                      <span className="result-meta">
+                        {t('Richer than')} {richerThanLabel}
+                      </span>
+                      <span className="result-meta-dot">•</span>
+                      <span className="result-meta">{basisLabel}</span>
+                    </p>
                   </div>
-                </div>
-              </div>
-
-              <div className="result-details">
-                <div className="detail-card">
-                  <div className="detail-label">{t('Top earners (out of 8 billion)')}</div>
-                  <div className="detail-value">
-                    {topPeople ? topPeople.toLocaleString(i18n.language) : '—'}
+                  <div className="result-stamp" aria-label={t('Income rank result')}>
+                    <div className="stamp-inner">
+                      <div className="stamp-top">{t('TOP')}</div>
+                      <div className="stamp-value">{topLabel}</div>
+                    </div>
                   </div>
-                  <div className="detail-sub">{t('people')}</div>
-                </div>
-
-                <div className="detail-card">
-                  <div className="detail-label">{t('Median (50th)')}</div>
-                  <div className="detail-value mono">
-                    {highlight.median ? usd.format(highlight.median) : '—'}
-                  </div>
-                  <div className="detail-sub">{t('Global')}</div>
-                </div>
-
-                <div className="detail-card">
-                  <div className="detail-label">{t('Top 10% starts at')}</div>
-                  <div className="detail-value mono">
-                    {highlight.top10 ? usd.format(highlight.top10) : '—'}
-                  </div>
-                  <div className="detail-sub">{t('per year')}</div>
                 </div>
 
-                <div className="detail-card">
-                  <div className="detail-label">{t('Top 1% starts at')}</div>
-                  <div className="detail-value mono">
-                    {highlight.top1 ? usd.format(highlight.top1) : '—'}
+                <div className="result-details">
+                  <div className="detail-card">
+                    <div className="detail-label">{t('Top earners (out of 8 billion)')}</div>
+                    <div className="detail-value">
+                      {topPeople ? topPeople.toLocaleString(i18n.language) : '—'}
+                    </div>
+                    <div className="detail-sub">{t('people')}</div>
                   </div>
-                  <div className="detail-sub">{t('per year')}</div>
+
+                  <div className="detail-card">
+                    <div className="detail-label">{t('Median (50th)')}</div>
+                    <div className="detail-value mono">
+                      {highlight.median ? usd.format(highlight.median) : '—'}
+                    </div>
+                    <div className="detail-sub">{t('Global')}</div>
+                  </div>
+
+                  <div className="detail-card">
+                    <div className="detail-label">{t('Top 10% starts at')}</div>
+                    <div className="detail-value mono">
+                      {highlight.top10 ? usd.format(highlight.top10) : '—'}
+                    </div>
+                    <div className="detail-sub">{t('per year')}</div>
+                  </div>
+
+                  <div className="detail-card">
+                    <div className="detail-label">{t('Top 1% starts at')}</div>
+                    <div className="detail-value mono">
+                      {highlight.top1 ? usd.format(highlight.top1) : '—'}
+                    </div>
+                    <div className="detail-sub">{t('per year')}</div>
+                  </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            <div className="result-empty">
-              <div className="empty-led">
-                <span className="empty-dot" />
-                <span className="empty-text">{t('Type an amount to see your rank')}</span>
-              </div>
-              <p className="empty-note">
-                {t('This calculator runs on-device — your income is not uploaded')}
-              </p>
-            </div>
-          )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                className="result-empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="empty-led">
+                  <span className="empty-dot" />
+                  <span className="empty-text">{t('Type an amount to see your rank')}</span>
+                </div>
+                <p className="empty-note">
+                  {t('This calculator runs on-device — your income is not uploaded')}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <motion.div

@@ -17,10 +17,7 @@
 .app-selector-title {
     font-size: clamp(2rem, 8vw, 3rem);
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.02em;
 }
