@@ -2,20 +2,20 @@ import { useTranslation } from 'react-i18next';
 import './LanguageSwitcher.css';
 
 const languages = [
-    { code: 'en', label: 'EN' },
-    { code: 'ko', label: 'KO' },
-    { code: 'es', label: 'ES' },
-    { code: 'pt', label: 'PT' },
-    { code: 'zh', label: 'ZH' },
-    { code: 'ja', label: 'JA' },
-    { code: 'fr', label: 'FR' },
-    { code: 'de', label: 'DE' },
-    { code: 'it', label: 'IT' },
-    { code: 'ru', label: 'RU' },
-    { code: 'hi', label: 'HI' },
-    { code: 'ar', label: 'AR' },
-    { code: 'id', label: 'ID' },
-    { code: 'tr', label: 'TR' },
+    { code: 'en', label: 'English' },
+    { code: 'ko', label: '한국어' },
+    { code: 'es', label: 'Español' },
+    { code: 'pt', label: 'Português' },
+    { code: 'zh', label: '中文' },
+    { code: 'ja', label: '日本語' },
+    { code: 'fr', label: 'Français' },
+    { code: 'de', label: 'Deutsch' },
+    { code: 'it', label: 'Italiano' },
+    { code: 'ru', label: 'Русский' },
+    { code: 'hi', label: 'हिन्दी' },
+    { code: 'ar', label: 'العربية' },
+    { code: 'id', label: 'Bahasa Indonesia' },
+    { code: 'tr', label: 'Türkçe' },
 ];
 
 export const LanguageSwitcher = () => {
