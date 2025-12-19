@@ -90,12 +90,43 @@ async function submitQuizData(data: Record<string, unknown>) {
   }
 }
 
+// Get initial view and shared data from URL parameters
+function getUrlState() {
+  const params = new URLSearchParams(window.location.search);
+  const app = params.get('app');
+  const score = params.get('score');
+  const income = params.get('income');
+  const basis = params.get('basis');
+
+  let view: 'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' = 'home';
+
+  if (app === 'income-rank') {
+    view = 'income';
+  } else if (app === 'world-rank') {
+    // If score is present, show result directly
+    if (score) {
+      view = 'result';
+    } else {
+      view = 'landing';
+    }
+  }
+
+  return {
+    view,
+    sharedScore: score ? parseFloat(score) : undefined,
+    sharedIncome: income ? parseFloat(income) : undefined,
+    sharedBasis: (basis === 'PPP' || basis === 'MER') ? basis : undefined,
+  };
+}
+
 function AppContent() {
   const { i18n } = useTranslation();
   const { canCollectData } = useConsent();
-  const [view, setView] = useState<'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income'>('home');
+  const urlState = getUrlState();
+  const [view, setView] = useState<'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income'>(urlState.view);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [demographics, setDemographics] = useState<DemographicsData | null>(null);
+  const [sharedScore] = useState<number | undefined>(urlState.sharedScore);
   const startTimeRef = useRef<number>(0);
   const attributionRef = useRef(getAttributionData());
 
@@ -211,7 +242,7 @@ function AppContent() {
         {view === 'income' && <IncomeRank key="income" />}
         {view === 'demographics' && <Demographics onComplete={handleDemographics} key="demographics" />}
         {view === 'quiz' && <Quiz onFinish={finishQuiz} key="quiz" />}
-        {view === 'result' && <Result answers={answers} onRestart={restart} key="result" />}
+        {view === 'result' && <Result answers={answers} sharedScore={sharedScore} onRestart={restart} key="result" />}
       </AnimatePresence>
       <ConsentBanner />
     </Layout>

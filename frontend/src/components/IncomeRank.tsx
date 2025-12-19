@@ -1,10 +1,21 @@
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import type { IncomeBasis } from '../data/worldIncomeThresholds';
 import { WORLD_INCOME_THRESHOLDS_USD, WORLD_INCOME_WID } from '../data/worldIncomeThresholds';
 import { formatTopPercent, percentileFromIncome, topPercentFromIncome } from '../utils/incomeRank';
 import './IncomeRank.css';
+
+// Parse URL parameters for shared results
+const getUrlParams = (): { income: number | null; basis: IncomeBasis | null } => {
+  const params = new URLSearchParams(window.location.search);
+  const income = params.get('income');
+  const basis = params.get('basis');
+  return {
+    income: income ? parseFloat(income) : null,
+    basis: (basis === 'PPP' || basis === 'MER') ? basis as IncomeBasis : null,
+  };
+};
 
 const parseIncomeInput = (value: string) => {
   const trimmed = value.trim();
@@ -25,11 +36,25 @@ function clamp(value: number, min: number, max: number) {
 
 export function IncomeRank() {
   const { t, i18n } = useTranslation();
-  const [basis, setBasis] = useState<IncomeBasis>('PPP');
-  const [incomeText, setIncomeText] = useState('');
-  const [submittedIncome, setSubmittedIncome] = useState<number | null>(null);
+  const urlParams = getUrlParams();
+  const [basis, setBasis] = useState<IncomeBasis>(urlParams.basis ?? 'PPP');
+  const [incomeText, setIncomeText] = useState(urlParams.income ? urlParams.income.toString() : '');
+  const [submittedIncome, setSubmittedIncome] = useState<number | null>(urlParams.income);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showCopied, setShowCopied] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
+  const initialLoadRef = useRef(true);
+
+  // Clear URL params after initial load to keep URL clean for manual use
+  useEffect(() => {
+    if (initialLoadRef.current && urlParams.income) {
+      initialLoadRef.current = false;
+      // Scroll to result after initial load from shared link
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 500);
+    }
+  }, [urlParams.income]);
 
   const thresholds = WORLD_INCOME_THRESHOLDS_USD[basis];
 
@@ -108,6 +133,36 @@ export function IncomeRank() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleCheck();
+    }
+  };
+
+  const handleShare = async () => {
+    // Build share URL with parameters
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = `${baseUrl}?app=income-rank&income=${submittedIncome}&basis=${basis}`;
+
+    const shareData = {
+      title: 'Awesome Rank',
+      text: t('My income is in the Top {{score}} worldwide. Check yours:', { score: topLabel }),
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Error sharing:', err);
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+        setShowCopied(true);
+        setTimeout(() => setShowCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
     }
   };
 
@@ -276,6 +331,12 @@ export function IncomeRank() {
                     </div>
                     <div className="detail-sub">{t('per year')}</div>
                   </div>
+                </div>
+
+                <div className="share-section">
+                  <button className="share-btn" onClick={handleShare}>
+                    {showCopied ? t('Copied!') : t('Share Rank')}
+                  </button>
                 </div>
               </motion.div>
             ) : (

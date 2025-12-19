@@ -14,6 +14,7 @@ export const Quiz = ({ onFinish }: QuizProps) => {
     const [answers, setAnswers] = useState<boolean[]>([]);
     const [questionTimes, setQuestionTimes] = useState<number[]>([]);
     const questionStartTime = useRef<number>(0);
+    const [direction, setDirection] = useState(1); // 1: forward, -1: backward
 
     // Reset timer when question changes
     useEffect(() => {
@@ -28,20 +29,39 @@ export const Quiz = ({ onFinish }: QuizProps) => {
 
         // Calculate time spent on this question
         const timeSpent = now - questionStartTime.current;
-        const newTimes = [...questionTimes, timeSpent];
-        setQuestionTimes(newTimes);
 
-        // Add answer to local state
-        const newAnswers = [...answers, answer];
+        // Update or add answer and time
+        const newAnswers = [...answers];
+        const newTimes = [...questionTimes];
+
+        if (index < answers.length) {
+            // Updating existing answer
+            newAnswers[index] = answer;
+            newTimes[index] = timeSpent;
+        } else {
+            // New answer
+            newAnswers.push(answer);
+            newTimes.push(timeSpent);
+        }
+
         setAnswers(newAnswers);
+        setQuestionTimes(newTimes);
 
         // Move to next question or finish
         if (index < questions.length - 1) {
+            setDirection(1);
             setTimeout(() => {
                 setIndex(index + 1);
-            }, 200); // Small delay for visual feedback
+            }, 200);
         } else {
             onFinish(newAnswers, newTimes);
+        }
+    };
+
+    const handleBack = () => {
+        if (index > 0) {
+            setDirection(-1);
+            setIndex(index - 1);
         }
     };
 
@@ -68,18 +88,32 @@ export const Quiz = ({ onFinish }: QuizProps) => {
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={question.id}
-                        initial={{ x: 20, opacity: 0 }}
+                        initial={{ x: direction * 20, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
-                        exit={{ x: -20, opacity: 0 }}
+                        exit={{ x: direction * -20, opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         className="question-card glass-panel"
                     >
-                        <div className="category-badge">{t(question.category).split('(')[0].trim()}</div>
+                        <div className="question-header">
+                            {index > 0 && (
+                                <motion.button
+                                    className="btn-back"
+                                    onClick={handleBack}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    aria-label={t('Back')}
+                                >
+                                    ←
+                                </motion.button>
+                            )}
+                            <div className="category-badge">{t(question.category).split('(')[0].trim()}</div>
+                        </div>
                         <h2 className="question-text">{t(question.id)}</h2>
 
                         <div className="options-grid">
                             <motion.button
-                                className="btn-option yes"
+                                key={`yes-${question.id}`}
+                                className={`btn-option yes ${answers[index] === true ? 'selected' : ''}`}
                                 onClick={() => handleAnswer(true)}
                                 whileHover={{ scale: 1.02, backgroundColor: "rgba(0, 240, 255, 0.2)" }}
                                 whileTap={{ scale: 0.98 }}
@@ -89,7 +123,8 @@ export const Quiz = ({ onFinish }: QuizProps) => {
                             </motion.button>
 
                             <motion.button
-                                className="btn-option no"
+                                key={`no-${question.id}`}
+                                className={`btn-option no ${answers[index] === false ? 'selected' : ''}`}
                                 onClick={() => handleAnswer(false)}
                                 whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 50, 50, 0.2)" }}
                                 whileTap={{ scale: 0.98 }}

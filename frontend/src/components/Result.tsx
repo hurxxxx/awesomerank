@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { questions } from '../data/questions';
 import './Result.css';
 
 interface ResultProps {
-    answers: boolean[];
+    answers?: boolean[];
+    sharedScore?: number;  // Score from URL for shared results
     onRestart: () => void;
 }
 
@@ -125,21 +127,32 @@ const globalScoreTable = (() => {
     return { entries, tailProbability };
 })();
 
-export const Result = ({ answers, onRestart }: ResultProps) => {
+export const Result = ({ answers, sharedScore, onRestart }: ResultProps) => {
     const { t } = useTranslation();
-    // Calculate a level-wise (non-compensatory) composite index, then convert it to a global "Top X%" percentile.
-    const userLevelYesCounts = levelModel.data.map((level) =>
-        level.indices.reduce((count, questionIndex) => count + (answers[questionIndex] ? 1 : 0), 0)
-    );
-    const userCompositeIndex = levelModel.compositeIndexFromYesCounts(userLevelYesCounts);
 
-    const startIndex = lowerBoundByScore(globalScoreTable.entries, userCompositeIndex);
-    const topShareRaw = startIndex < globalScoreTable.tailProbability.length
-        ? globalScoreTable.tailProbability[startIndex]
-        : 0;
-    const topShare = Math.min(1, Math.max(0, topShareRaw));
+    // Calculate score from answers or use shared score
+    const score = (() => {
+        if (sharedScore !== undefined) {
+            return sharedScore;
+        }
+        if (!answers) {
+            return 50; // Default fallback
+        }
+        // Calculate a level-wise (non-compensatory) composite index, then convert it to a global "Top X%" percentile.
+        const userLevelYesCounts = levelModel.data.map((level) =>
+            level.indices.reduce((count, questionIndex) => count + (answers[questionIndex] ? 1 : 0), 0)
+        );
+        const userCompositeIndex = levelModel.compositeIndexFromYesCounts(userLevelYesCounts);
 
-    const score = topShare * 100;
+        const startIndex = lowerBoundByScore(globalScoreTable.entries, userCompositeIndex);
+        const topShareRaw = startIndex < globalScoreTable.tailProbability.length
+            ? globalScoreTable.tailProbability[startIndex]
+            : 0;
+        const topShare = Math.min(1, Math.max(0, topShareRaw));
+        return topShare * 100;
+    })();
+
+    const isSharedResult = sharedScore !== undefined;
 
     // Format score logic
     let displayScore = score.toLocaleString(undefined, { maximumSignificantDigits: 4 });
@@ -153,6 +166,7 @@ export const Result = ({ answers, onRestart }: ResultProps) => {
 
     // Calculate how many people share this level globally (out of 8 billion)
     const WORLD_POPULATION = 8_000_000_000;
+    const topShare = score / 100;
     const peopleAtThisLevel = Math.round(WORLD_POPULATION * topShare);
     const peopleString = peopleAtThisLevel.toLocaleString();
 
@@ -167,6 +181,38 @@ export const Result = ({ answers, onRestart }: ResultProps) => {
     else if (score < 10) { tier = t("High Achiever"); tierColor = "#00f3ff"; } // Cyan
     else if (score < 30) { tier = t("Global Middle Class"); tierColor = "#4cd137"; } // Green
     else if (score < 60) { tier = t("Aspiring Global"); tierColor = "#fbc531"; } // Yellow
+
+    const [showCopied, setShowCopied] = useState(false);
+
+    const handleShare = async () => {
+        // Build share URL with score parameter
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}?app=world-rank&score=${score}`;
+
+        const shareData = {
+            title: 'Awesome Rank',
+            text: t('I am in the Top {{score}}% of the global population! #AwesomeRank', { score: displayScore }),
+            url: shareUrl,
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if ((err as Error).name !== 'AbortError') {
+                    console.error('Error sharing:', err);
+                }
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+                setShowCopied(true);
+                setTimeout(() => setShowCopied(false), 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+        }
+    };
 
     return (
         <motion.div
@@ -235,17 +281,32 @@ export const Result = ({ answers, onRestart }: ResultProps) => {
                 </motion.div>
             </div>
 
-            <motion.button
-                className="btn-restart"
-                onClick={onRestart}
+            <motion.div
+                className="action-buttons"
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 2.5 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
             >
-                {t('Start Again')}
-            </motion.button>
+                {!isSharedResult && (
+                    <motion.button
+                        className="btn-share"
+                        onClick={handleShare}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        {showCopied ? t('Copied!') : t('Share Result')}
+                    </motion.button>
+                )}
+
+                <motion.button
+                    className="btn-restart"
+                    onClick={onRestart}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    {isSharedResult ? t('Try It Yourself') : t('Start Again')}
+                </motion.button>
+            </motion.div>
         </motion.div>
     );
 };
