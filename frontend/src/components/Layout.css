@@ -86,12 +86,33 @@
     background: var(--glass-bg);
 }
 
+.layout-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+}
+
 .footer-brand {
     font-size: 0.75rem;
     color: var(--text-secondary);
     opacity: 0.6;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+}
+
+.footer-github {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    transition: all 0.2s ease;
+}
+
+.footer-github:hover {
+    opacity: 1;
+    color: var(--primary-color);
 }
 
 /* Responsive */
