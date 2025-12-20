@@ -69,11 +69,13 @@
   "Global": "Pandaigdig",
   "Global Citizen": "Pandaigdigang Mamamayan",
   "Global Middle Class": "Pandaigdigang Gitnang Uri",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Nakasakay ka na ba sa eroplano?",
   "High Achiever": "Mataas na Tagumpay",
   "Home": "Home",
   "Human Capital": "Kapital Pantao",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Batayan ng kita",
   "Income Rank": "Ranggo ng Kita",
   "Income rank result": "Resulta ng ranggo ng kita",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "I-type ang halaga para makita ang iyong ranggo",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Visionary Elite",
   "Where do you stand among\n8 billion people?": "Nasaan ka kabilang sa\n8 bilyong tao?",
   "WID thresholds (wid.world)": "Mga threshold ng WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "World Class",
   "YES": "OO",
   "Yes_Hint": "Oo",
-  "You are in the top": "Ikaw ay nasa tuktok na"
+  "You are in the top": "Ikaw ay nasa tuktok na",
+  "Your Answers": ""
 }

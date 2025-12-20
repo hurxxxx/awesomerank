@@ -69,11 +69,13 @@
   "Global": "Globális",
   "Global Citizen": "Globális Polgár",
   "Global Middle Class": "Globális Középosztály",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Repültél már repülőgépen?",
   "High Achiever": "Kimagasló Teljesítményű",
   "Home": "Főoldal",
   "Human Capital": "Humán Tőke",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Jövedelem alapja",
   "Income Rank": "Jövedelem Rangsor",
   "Income rank result": "Jövedelem rangsor eredmény",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Írj be egy összeget a rangsorod megtekintéséhez",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Jövőlátó Elit",
   "Where do you stand among\n8 billion people?": "Hol állsz\n8 milliárd ember között?",
   "WID thresholds (wid.world)": "WID küszöbértékek (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Világszínvonalú",
   "YES": "IGEN",
   "Yes_Hint": "Igen",
-  "You are in the top": "Te a felső"
+  "You are in the top": "Te a felső",
+  "Your Answers": ""
 }

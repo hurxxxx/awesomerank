@@ -69,11 +69,13 @@
   "Global": "Ülemaailmne",
   "Global Citizen": "Ülemaailmne kodanik",
   "Global Middle Class": "Ülemaailmne keskklass",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Kas oled kunagi lennukiga lennanud?",
   "High Achiever": "Kõrge saavutaja",
   "Home": "Avaleht",
   "Human Capital": "Inimkapital",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Sissetuleku alus",
   "Income Rank": "Sissetulekute edetabel",
   "Income rank result": "Sissetulekute edetabeli tulemus",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Sisesta summa, et näha oma edetabelikohta",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Visionäärne eliit",
   "Where do you stand among\n8 billion people?": "Kus sa seisad 8 miljardi\ninimese seas?",
   "WID thresholds (wid.world)": "WID künnised (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Maailmaklassi",
   "YES": "JAH",
   "Yes_Hint": "Jah",
-  "You are in the top": "Sa oled parimate seas"
+  "You are in the top": "Sa oled parimate seas",
+  "Your Answers": ""
 }

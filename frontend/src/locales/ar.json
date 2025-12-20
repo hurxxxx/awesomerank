@@ -69,11 +69,13 @@
   "Global": "عالمي",
   "Global Citizen": "مواطن عالمي",
   "Global Middle Class": "الطبقة المتوسطة العالمية",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "هل سبق لك السفر بالطائرة؟",
   "High Achiever": "منجز عالي",
   "Home": "الرئيسية",
   "Human Capital": "رأس المال البشري",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "أنا ضمن أعلى {{score}}% من سكان العالم! #AwesomeRank",
+  "Implication": "",
   "Income basis": "أساس الدخل",
   "Income Rank": "ترتيب الدخل",
   "Income rank result": "نتيجة ترتيب الدخل",
@@ -156,6 +158,7 @@
   "Try It Yourself": "جربها بنفسك",
   "Type an amount to see your rank": "اكتب مبلغًا لرؤية ترتيبك",
   "USD": "دولار أمريكي",
+  "View Details": "",
   "Visionary Elite": "النخبة الرؤيوية",
   "Where do you stand among\n8 billion people?": "أين تقف بين\n8 مليار نسمة؟",
   "WID thresholds (wid.world)": "عتبات WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "مستوى عالمي",
   "YES": "نعم",
   "Yes_Hint": "نعم",
-  "You are in the top": "أنت في أعلى"
+  "You are in the top": "أنت في أعلى",
+  "Your Answers": ""
 }

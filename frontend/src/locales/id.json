@@ -69,11 +69,13 @@
   "Global": "Global",
   "Global Citizen": "Warga Global",
   "Global Middle Class": "Kelas Menengah Global",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Pernahkah Anda terbang dengan pesawat terbang?",
   "High Achiever": "Berprestasi Tinggi",
   "Home": "Beranda",
   "Human Capital": "Modal Manusia",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "Saya berada di Top {{score}}% populasi global! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Basis pendapatan",
   "Income Rank": "Peringkat Pendapatan",
   "Income rank result": "Hasil peringkat pendapatan",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Coba Sendiri",
   "Type an amount to see your rank": "Ketik jumlah untuk melihat peringkat Anda",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Elite Visioner",
   "Where do you stand among\n8 billion people?": "Di mana posisi Anda di antara\n8 miliar orang?",
   "WID thresholds (wid.world)": "Ambang batas WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Kelas Dunia",
   "YES": "YA",
   "Yes_Hint": "Ya",
-  "You are in the top": "Anda berada di urutan teratas"
+  "You are in the top": "Anda berada di urutan teratas",
+  "Your Answers": ""
 }

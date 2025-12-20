@@ -69,11 +69,13 @@
   "Global": "グローバル",
   "Global Citizen": "地球市民",
   "Global Middle Class": "グローバル中産階級",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "飛行機に乗ったことはありますか？",
   "High Achiever": "ハイアチーバー",
   "Home": "ホーム",
   "Human Capital": "人的資本",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "私は世界人口の上位{{score}}%です！ #AwesomeRank",
+  "Implication": "",
   "Income basis": "所得基準",
   "Income Rank": "所得ランク",
   "Income rank result": "所得ランク結果",
@@ -156,6 +158,7 @@
   "Try It Yourself": "自分で試す",
   "Type an amount to see your rank": "金額を入力してランクを確認",
   "USD": "米ドル",
+  "View Details": "",
   "Visionary Elite": "ビジョナリーエリート",
   "Where do you stand among\n8 billion people?": "80億人の中で、\nあなたはどの位置にいますか？",
   "WID thresholds (wid.world)": "WID基準値（wid.world）",
@@ -163,5 +166,6 @@
   "World Class": "ワールドクラス",
   "YES": "はい",
   "Yes_Hint": "はい",
-  "You are in the top": "あなたは世界の上位"
+  "You are in the top": "あなたは世界の上位",
+  "Your Answers": ""
 }

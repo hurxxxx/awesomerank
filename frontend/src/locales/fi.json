@@ -69,11 +69,13 @@
   "Global": "Maailmanlaajuinen",
   "Global Citizen": "Maailmankansalainen",
   "Global Middle Class": "Globaali keskiluokka",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Oletko koskaan lentänyt lentokoneella?",
   "High Achiever": "Korkeatasoinen saavuttaja",
   "Home": "Koti",
   "Human Capital": "Inhimillinen pääoma",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Tuloperuste",
   "Income Rank": "Tulosijoitus",
   "Income rank result": "Tulosijoituksen tulos",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Kirjoita summa nähdäksesi sijoituksesi",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Visionäärieliitti",
   "Where do you stand among\n8 billion people?": "Missä seisot\n8 miljardin ihmisen joukossa?",
   "WID thresholds (wid.world)": "WID-kynnysarvot (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Maailmanluokka",
   "YES": "KYLLÄ",
   "Yes_Hint": "Kyllä",
-  "You are in the top": "Olet parhaassa"
+  "You are in the top": "Olet parhaassa",
+  "Your Answers": ""
 }

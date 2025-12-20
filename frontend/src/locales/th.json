@@ -69,11 +69,13 @@
   "Global": "ทั่วโลก",
   "Global Citizen": "พลเมืองโลก",
   "Global Middle Class": "ชนชั้นกลางระดับโลก",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "คุณเคยนั่งเครื่องบินหรือไม่?",
   "High Achiever": "ผู้ประสบความสำเร็จสูง",
   "Home": "หน้าหลัก",
   "Human Capital": "ทุนมนุษย์",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "พื้นฐานรายได้",
   "Income Rank": "อันดับรายได้",
   "Income rank result": "ผลลัพธ์อันดับรายได้",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "พิมพ์จำนวนเงินเพื่อดูอันดับของคุณ",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "ชนชั้นสูงผู้มีวิสัยทัศน์",
   "Where do you stand among\n8 billion people?": "คุณอยู่ตรงไหนในบรรดา\n8 พันล้านคน?",
   "WID thresholds (wid.world)": "เกณฑ์ WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "ระดับโลก",
   "YES": "ใช่",
   "Yes_Hint": "ใช่",
-  "You are in the top": "คุณอยู่ใน"
+  "You are in the top": "คุณอยู่ใน",
+  "Your Answers": ""
 }

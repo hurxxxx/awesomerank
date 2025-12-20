@@ -69,11 +69,13 @@
   "Global": "Alþjóðlegur",
   "Global Citizen": "Alþjóðlegur borgari",
   "Global Middle Class": "Alþjóðlegur millistétt",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Hefur þú einhvern tíma flogið í flugvél?",
   "High Achiever": "Hæfileikafólk",
   "Home": "Heim",
   "Human Capital": "Mannauður",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Tekjugrunnur",
   "Income Rank": "Tekjuröðun",
   "Income rank result": "Niðurstaða tekjuröðunar",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Sláðu inn upphæð til að sjá röðun þína",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Framsýnt úrval",
   "Where do you stand among\n8 billion people?": "Hvar stendur þú meðal\n8 milljarða manna?",
   "WID thresholds (wid.world)": "WID þröskuldar (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Heimsklassi",
   "YES": "JÁ",
   "Yes_Hint": "Já",
-  "You are in the top": "Þú ert í efstu"
+  "You are in the top": "Þú ert í efstu",
+  "Your Answers": ""
 }

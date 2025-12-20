@@ -69,11 +69,13 @@
   "Global": "Pasaulinis",
   "Global Citizen": "Pasaulio pilietis",
   "Global Middle Class": "Pasaulinė vidurinė klasė",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Ar kada nors skridote lėktuvu?",
   "High Achiever": "Aukšto lygio",
   "Home": "Pradžia",
   "Human Capital": "Žmogiškasis kapitalas",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Pajamų bazė",
   "Income Rank": "Pajamų rangas",
   "Income rank result": "Pajamų rango rezultatas",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Įveskite sumą, kad pamatytumėte savo rangą",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Vizionierių elitas",
   "Where do you stand among\n8 billion people?": "Kur esate tarp\n8 milijardų žmonių?",
   "WID thresholds (wid.world)": "WID ribos (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Pasaulio klasės",
   "YES": "TAIP",
   "Yes_Hint": "Taip",
-  "You are in the top": "Esate tarp geriausių"
+  "You are in the top": "Esate tarp geriausių",
+  "Your Answers": ""
 }

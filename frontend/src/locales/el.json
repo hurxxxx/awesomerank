@@ -69,11 +69,13 @@
   "Global": "Παγκόσμιο",
   "Global Citizen": "Παγκόσμιος Πολίτης",
   "Global Middle Class": "Παγκόσμια Μεσαία Τάξη",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Έχετε ταξιδέψει ποτέ με αεροπλάνο;",
   "High Achiever": "Υψηλής Απόδοσης",
   "Home": "Αρχική",
   "Human Capital": "Ανθρώπινο Κεφάλαιο",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Βάση εισοδήματος",
   "Income Rank": "Κατάταξη Εισοδήματος",
   "Income rank result": "Αποτέλεσμα κατάταξης εισοδήματος",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Πληκτρολογήστε ένα ποσό για να δείτε την κατάταξή σας",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Οραματιστής Ελίτ",
   "Where do you stand among\n8 billion people?": "Πού βρίσκεστε ανάμεσα σε\n8 δισεκατομμύρια ανθρώπους;",
   "WID thresholds (wid.world)": "Όρια WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Παγκόσμιας Κλάσης",
   "YES": "ΝΑΙ",
   "Yes_Hint": "Ναι",
-  "You are in the top": "Είστε στο κορυφαίο"
+  "You are in the top": "Είστε στο κορυφαίο",
+  "Your Answers": ""
 }

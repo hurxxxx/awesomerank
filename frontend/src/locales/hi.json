@@ -69,11 +69,13 @@
   "Global": "वैश्विक",
   "Global Citizen": "वैश्विक नागरिक",
   "Global Middle Class": "वैश्विक मध्यम वर्ग",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "क्या आपने कभी हवाई जहाज में उड़ान भरी है?",
   "High Achiever": "उच्च उपलब्धि प्राप्तकर्ता",
   "Home": "होम",
   "Human Capital": "मानव पूंजी",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "मैं वैश्विक जनसंख्या के शीर्ष {{score}}% में हूं! #AwesomeRank",
+  "Implication": "",
   "Income basis": "आय का आधार",
   "Income Rank": "आय रैंक",
   "Income rank result": "आय रैंक परिणाम",
@@ -156,6 +158,7 @@
   "Try It Yourself": "खुद आज़माएं",
   "Type an amount to see your rank": "अपनी रैंक देखने के लिए राशि टाइप करें",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "विजनरी एलीट",
   "Where do you stand among\n8 billion people?": "8 अरब लोगों के बीच\nआप कहां खड़े हैं?",
   "WID thresholds (wid.world)": "WID सीमाएं (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "वर्ल्ड क्लास",
   "YES": "हाँ",
   "Yes_Hint": "हाँ",
-  "You are in the top": "आप शीर्ष में हैं"
+  "You are in the top": "आप शीर्ष में हैं",
+  "Your Answers": ""
 }

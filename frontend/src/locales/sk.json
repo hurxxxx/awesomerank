@@ -69,11 +69,13 @@
   "Global": "Globálny",
   "Global Citizen": "Globálny občan",
   "Global Middle Class": "Globálna stredná trieda",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Už ste niekedy leteli lietadlom?",
   "High Achiever": "Vysoký výkon",
   "Home": "Domov",
   "Human Capital": "Ľudský kapitál",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Základ príjmu",
   "Income Rank": "Príjmové rebríček",
   "Income rank result": "Výsledok príjmového rebríčka",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Zadajte sumu pre zobrazenie vášho rebríčka",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Vizionárska elita",
   "Where do you stand among\n8 billion people?": "Kde sa nachádzate medzi\n8 miliardami ľudí?",
   "WID thresholds (wid.world)": "Prahy WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Svetová trieda",
   "YES": "ÁNO",
   "Yes_Hint": "Áno",
-  "You are in the top": "Patríte medzi najlepších"
+  "You are in the top": "Patríte medzi najlepších",
+  "Your Answers": ""
 }

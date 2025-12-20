@@ -69,11 +69,13 @@
   "Global": "Toàn cầu",
   "Global Citizen": "Công dân toàn cầu",
   "Global Middle Class": "Tầng lớp trung lưu toàn cầu",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Bạn đã từng đi máy bay chưa?",
   "High Achiever": "Người thành đạt",
   "Home": "Trang chủ",
   "Human Capital": "Vốn con người",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Cơ sở thu nhập",
   "Income Rank": "Xếp hạng thu nhập",
   "Income rank result": "Kết quả xếp hạng thu nhập",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Nhập số tiền để xem xếp hạng của bạn",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Tầng lớp tinh hoa tầm nhìn",
   "Where do you stand among\n8 billion people?": "Bạn đứng ở đâu trong\n8 tỷ người?",
   "WID thresholds (wid.world)": "Ngưỡng WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Đẳng cấp thế giới",
   "YES": "CÓ",
   "Yes_Hint": "Có",
-  "You are in the top": "Bạn thuộc top"
+  "You are in the top": "Bạn thuộc top",
+  "Your Answers": ""
 }

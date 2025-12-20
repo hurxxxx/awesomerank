@@ -69,11 +69,13 @@
   "Global": "עולמי",
   "Global Citizen": "אזרח עולמי",
   "Global Middle Class": "מעמד ביניים עולמי",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "האם אי פעם טסת במטוס?",
   "High Achiever": "מצטיין",
   "Home": "בית",
   "Human Capital": "הון אנושי",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "בסיס הכנסה",
   "Income Rank": "דירוג הכנסה",
   "Income rank result": "תוצאת דירוג הכנסה",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "הקלד סכום כדי לראות את הדירוג שלך",
   "USD": "דולר אמריקאי",
+  "View Details": "",
   "Visionary Elite": "עילית חזונית",
   "Where do you stand among\n8 billion people?": "היכן אתה נמצא מבין\n8 מiliard אנשים?",
   "WID thresholds (wid.world)": "סף WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "ברמה עולמית",
   "YES": "כן",
   "Yes_Hint": "כן",
-  "You are in the top": "אתה ב"
+  "You are in the top": "אתה ב",
+  "Your Answers": ""
 }

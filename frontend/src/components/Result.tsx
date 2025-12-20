@@ -1,7 +1,8 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { questions } from '../data/questions';
+import { questionDetails } from '../data/questionDetails';
 import './Result.css';
 
 interface ResultProps {
@@ -183,6 +184,7 @@ export const Result = ({ answers, sharedScore, onRestart }: ResultProps) => {
     else if (score < 60) { tier = t("Aspiring Global"); tierColor = "#fbc531"; } // Yellow
 
     const [showCopied, setShowCopied] = useState(false);
+    const [showDetails, setShowDetails] = useState(false);
 
     const handleShare = async () => {
         // Build share URL with score parameter
@@ -298,6 +300,17 @@ export const Result = ({ answers, sharedScore, onRestart }: ResultProps) => {
                     </motion.button>
                 )}
 
+                {!isSharedResult && answers && (
+                    <motion.button
+                        className="btn-details"
+                        onClick={() => setShowDetails(true)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        {t('View Details')}
+                    </motion.button>
+                )}
+
                 <motion.button
                     className="btn-restart"
                     onClick={onRestart}
@@ -307,6 +320,77 @@ export const Result = ({ answers, sharedScore, onRestart }: ResultProps) => {
                     {isSharedResult ? t('Try It Yourself') : t('Start Again')}
                 </motion.button>
             </motion.div>
+
+            <AnimatePresence>
+                {showDetails && answers && (
+                    <motion.div
+                        className="details-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowDetails(false)}
+                    >
+                        <motion.div
+                            className="details-modal"
+                            initial={{ y: 50, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: 50, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="details-header">
+                                <h2>{t('Your Answers')}</h2>
+                                <button
+                                    className="details-close"
+                                    onClick={() => setShowDetails(false)}
+                                    aria-label={t('Close')}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            <div className="details-content">
+                                {questions.map((q, index) => {
+                                    const detail = questionDetails[q.id];
+                                    const userAnswer = answers[index];
+                                    return (
+                                        <div key={q.id} className="detail-item">
+                                            <div className="detail-question-header">
+                                                <span className="detail-number">{detail?.id || `Q${index + 1}`}</span>
+                                                <span className={`detail-answer ${userAnswer ? 'yes' : 'no'}`}>
+                                                    {userAnswer ? t('YES') : t('NO')}
+                                                </span>
+                                            </div>
+                                            <div className="detail-question-text">
+                                                {t(q.id)}
+                                            </div>
+                                            <div className="detail-category">
+                                                {q.category}
+                                            </div>
+                                            {detail && (
+                                                <div className="detail-stats">
+                                                    <div className="detail-stat-row">
+                                                        <span className="detail-stat-label">{t('Global Rate')}</span>
+                                                        <span className="detail-stat-value">{detail.percentage}%</span>
+                                                    </div>
+                                                    <div className="detail-stat-row">
+                                                        <span className="detail-stat-label">{t('Source')}</span>
+                                                        <span className="detail-stat-value">{detail.source}</span>
+                                                    </div>
+                                                    <div className="detail-description">
+                                                        {detail.details}
+                                                    </div>
+                                                    <div className="detail-implication">
+                                                        <strong>{t('Implication')}:</strong> {detail.implication}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 };

@@ -69,11 +69,13 @@
   "Global": "Global",
   "Global Citizen": "Global Citizen",
   "Global Middle Class": "Global Middle Class",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Have you ever flown on an airplane?",
   "High Achiever": "High Achiever",
   "Home": "Home",
   "Human Capital": "Human Capital",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Income basis",
   "Income Rank": "Income Rank",
   "Income rank result": "Income rank result",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Type an amount to see your rank",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Visionary Elite",
   "Where do you stand among\n8 billion people?": "Where do you stand among\n8 billion people?",
   "WID thresholds (wid.world)": "WID thresholds (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "World Class",
   "YES": "YES",
   "Yes_Hint": "Yes",
-  "You are in the top": "You are in the top"
+  "You are in the top": "You are in the top",
+  "Your Answers": ""
 }

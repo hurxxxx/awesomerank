@@ -69,11 +69,13 @@
   "Global": "Globalno",
   "Global Citizen": "Globalni državljan",
   "Global Middle Class": "Globalni srednji razred",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Ali ste že kdaj leteli z letalom?",
   "High Achiever": "Visoki dosežek",
   "Home": "Domov",
   "Human Capital": "Človeški kapital",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Osnova dohodka",
   "Income Rank": "Rang dohodka",
   "Income rank result": "Rezultat ranga dohodka",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Vnesite znesek za ogled vašega ranga",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Vizionarska elita",
   "Where do you stand among\n8 billion people?": "Kje se nahajate med\n8 milijardami ljudi?",
   "WID thresholds (wid.world)": "WID pragovi (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Svetovni razred",
   "YES": "DA",
   "Yes_Hint": "Da",
-  "You are in the top": "Nahajate se med vrhnjimi"
+  "You are in the top": "Nahajate se med vrhnjimi",
+  "Your Answers": ""
 }

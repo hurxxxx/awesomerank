@@ -69,11 +69,13 @@
   "Global": "Глобальный",
   "Global Citizen": "Гражданин Мира",
   "Global Middle Class": "Глобальный Средний Класс",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Летали ли вы когда-нибудь на самолете?",
   "High Achiever": "Высокие Достижения",
   "Home": "Главная",
   "Human Capital": "Человеческий Капитал",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "Я в топ {{score}}% мирового населения! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Основа дохода",
   "Income Rank": "Рейтинг Дохода",
   "Income rank result": "Результат рейтинга дохода",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Попробуй сам",
   "Type an amount to see your rank": "Введите сумму, чтобы увидеть ваш рейтинг",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Визионерская Элита",
   "Where do you stand among\n8 billion people?": "Где вы находитесь среди\n8 миллиардов человек?",
   "WID thresholds (wid.world)": "Пороги WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Мировой Класс",
   "YES": "ДА",
   "Yes_Hint": "Да",
-  "You are in the top": "Вы входите в топ"
+  "You are in the top": "Вы входите в топ",
+  "Your Answers": ""
 }

@@ -69,11 +69,13 @@
   "Global": "Küresel",
   "Global Citizen": "Dünya Vatandaşı",
   "Global Middle Class": "Küresel Orta Sınıf",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Hiç uçağa bindiniz mi?",
   "High Achiever": "Yüksek Başarı Gösteren",
   "Home": "Ana Sayfa",
   "Human Capital": "Beşeri Sermaye",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "Dünya nüfusunun en üst {{score}}%'sindeyim! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Gelir temeli",
   "Income Rank": "Gelir Sıralaması",
   "Income rank result": "Gelir sıralaması sonucu",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Kendin Dene",
   "Type an amount to see your rank": "Sıralamanızı görmek için bir miktar yazın",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Vizyoner Elit",
   "Where do you stand among\n8 billion people?": "8 milyar insan arasında\nnerede duruyorsunuz?",
   "WID thresholds (wid.world)": "WID eşikleri (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Dünya Sınıfı",
   "YES": "EVET",
   "Yes_Hint": "Evet",
-  "You are in the top": "Dünya nüfusunun"
+  "You are in the top": "Dünya nüfusunun",
+  "Your Answers": ""
 }

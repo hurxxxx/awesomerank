@@ -69,11 +69,13 @@
   "Global": "Global",
   "Global Citizen": "Global Borger",
   "Global Middle Class": "Global Middelklasse",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Har du nogensinde fløjet i et fly?",
   "High Achiever": "Højtpræsterende",
   "Home": "Hjem",
   "Human Capital": "Menneskelig Kapital",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Indkomstgrundlag",
   "Income Rank": "Indkomstrangliste",
   "Income rank result": "Indkomstrangliste resultat",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Indtast et beløb for at se din rangliste",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Visionær Elite",
   "Where do you stand among\n8 billion people?": "Hvor står du blandt\n8 milliarder mennesker?",
   "WID thresholds (wid.world)": "WID tærskler (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Verdensklasse",
   "YES": "JA",
   "Yes_Hint": "Ja",
-  "You are in the top": "Du er i top"
+  "You are in the top": "Du er i top",
+  "Your Answers": ""
 }

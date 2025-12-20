@@ -69,11 +69,13 @@
   "Global": "全球",
   "Global Citizen": "全球公民",
   "Global Middle Class": "全球中产",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "你坐过飞机吗？",
   "High Achiever": "高成就者",
   "Home": "首页",
   "Human Capital": "人力资本",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "我位于全球人口前{{score}}%！#AwesomeRank",
+  "Implication": "",
   "Income basis": "收入基准",
   "Income Rank": "收入排名",
   "Income rank result": "收入排名结果",
@@ -156,6 +158,7 @@
   "Try It Yourself": "自己试试",
   "Type an amount to see your rank": "输入金额查看您的排名",
   "USD": "美元",
+  "View Details": "",
   "Visionary Elite": "远见精英",
   "Where do you stand among\n8 billion people?": "在80亿人中，\n你处于什么位置？",
   "WID thresholds (wid.world)": "WID阈值（wid.world）",
@@ -163,5 +166,6 @@
   "World Class": "世界级",
   "YES": "是",
   "Yes_Hint": "是",
-  "You are in the top": "你在全球排名前"
+  "You are in the top": "你在全球排名前",
+  "Your Answers": ""
 }

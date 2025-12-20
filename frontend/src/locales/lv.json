@@ -69,11 +69,13 @@
   "Global": "Globāls",
   "Global Citizen": "Globālais pilsonis",
   "Global Middle Class": "Globālā vidusšķira",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Vai esat kādreiz lidojis ar lidmašīnu?",
   "High Achiever": "Augsts sasniegumu līmenis",
   "Home": "Sākums",
   "Human Capital": "Cilvēkkapitāls",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Ienākumu bāze",
   "Income Rank": "Ienākumu rangs",
   "Income rank result": "Ienākumu ranga rezultāts",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Ierakstiet summu, lai redzētu savu rangu",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Vīzionārā elite",
   "Where do you stand among\n8 billion people?": "Kur jūs atrodaties starp\n8 miljardiem cilvēku?",
   "WID thresholds (wid.world)": "WID sliekšņi (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Pasaules klase",
   "YES": "JĀ",
   "Yes_Hint": "Jā",
-  "You are in the top": "Jūs esat augšējos"
+  "You are in the top": "Jūs esat augšējos",
+  "Your Answers": ""
 }

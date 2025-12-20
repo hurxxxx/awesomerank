@@ -69,11 +69,13 @@
   "Global": "Globalny",
   "Global Citizen": "Obywatel Świata",
   "Global Middle Class": "Globalna Klasa Średnia",
+  "Global Rate": "",
   "Have you ever flown on an airplane?": "Czy kiedykolwiek leciałeś samolotem?",
   "High Achiever": "Wysoko Osiągający",
   "Home": "Strona główna",
   "Human Capital": "Kapitał ludzki",
   "I am in the Top {{score}}% of the global population! #AwesomeRank": "I am in the Top {{score}}% of the global population! #AwesomeRank",
+  "Implication": "",
   "Income basis": "Podstawa dochodu",
   "Income Rank": "Ranking Dochodowy",
   "Income rank result": "Wynik rankingu dochodowego",
@@ -156,6 +158,7 @@
   "Try It Yourself": "Try It Yourself",
   "Type an amount to see your rank": "Wpisz kwotę, aby zobaczyć swoją pozycję",
   "USD": "USD",
+  "View Details": "",
   "Visionary Elite": "Elita Wizjonerów",
   "Where do you stand among\n8 billion people?": "Gdzie znajdujesz się wśród\n8 miliardów ludzi?",
   "WID thresholds (wid.world)": "Progi WID (wid.world)",
@@ -163,5 +166,6 @@
   "World Class": "Klasa Światowa",
   "YES": "TAK",
   "Yes_Hint": "Tak",
-  "You are in the top": "Jesteś w czołowych"
+  "You are in the top": "Jesteś w czołowych",
+  "Your Answers": ""
 }
