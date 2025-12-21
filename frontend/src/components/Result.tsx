@@ -156,6 +156,9 @@ export const Result = ({ answers, sharedScore, onRestart }: ResultProps) => {
                             {t('Out of 8 billion people, only')} <span className="mono">{peopleInGroup.toLocaleString(i18n.language)}</span> {t('are in this group.')}
                         </p>
                     )}
+                    <p className="result-disclaimer">
+                        {t('This result is a modeled estimate, not a factual measurement. Real-world rankings can differ, but the pattern can still be meaningful, especially when comparing across questions.')}
+                    </p>
                 </motion.div>
             </div>
 
