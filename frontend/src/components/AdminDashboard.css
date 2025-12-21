@@ -1,0 +1,291 @@
+.admin-dashboard {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #333;
+}
+
+.admin-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.refresh-btn {
+  padding: 8px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.refresh-btn:hover {
+  background: #1d4ed8;
+}
+
+.admin-loading,
+.admin-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 16px;
+}
+
+.admin-error button {
+  padding: 8px 16px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background: #1a1a1a;
+  color: #999;
+  border: 1px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  background: #252525;
+  color: #fff;
+}
+
+.tab-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+/* Summary Section */
+.admin-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.summary-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.summary-card.total {
+  text-align: center;
+}
+
+.summary-card h3 {
+  font-size: 14px;
+  color: #888;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.big-number {
+  font-size: 48px;
+  font-weight: 700;
+  color: #2563eb;
+  margin: 0;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.stat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stat-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #252525;
+}
+
+.stat-list li:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: #ccc;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Responses Table */
+.admin-responses {
+  overflow: hidden;
+}
+
+.table-container {
+  overflow-x: auto;
+  border: 1px solid #333;
+  border-radius: 12px;
+}
+
+.responses-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.responses-table th,
+.responses-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #252525;
+  white-space: nowrap;
+}
+
+.responses-table th {
+  background: #1a1a1a;
+  color: #888;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+}
+
+.responses-table tbody tr {
+  background: #0f0f0f;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.responses-table tbody tr:hover {
+  background: #1a1a1a;
+}
+
+.responses-table tbody tr.expanded {
+  background: #1a2744;
+}
+
+.detail-row {
+  background: #111827 !important;
+  cursor: default !important;
+}
+
+.detail-row:hover {
+  background: #111827 !important;
+}
+
+.detail-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-section h4 {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.detail-section p {
+  margin: 0;
+  color: #ccc;
+}
+
+.answers-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.answer-badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.answer-badge.yes {
+  background: #065f46;
+  color: #6ee7b7;
+}
+
+.answer-badge.no {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+.no-data {
+  text-align: center;
+  padding: 48px;
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 12px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .admin-header h1 {
+    font-size: 20px;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .big-number {
+    font-size: 36px;
+  }
+
+  .responses-table {
+    font-size: 11px;
+  }
+
+  .responses-table th,
+  .responses-table td {
+    padding: 8px 6px;
+  }
+}

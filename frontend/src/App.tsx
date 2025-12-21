@@ -8,6 +8,7 @@ import type { DemographicsData } from './components/Demographics';
 import { Quiz } from './components/Quiz';
 import { Result } from './components/Result';
 import { IncomeRank } from './components/IncomeRank';
+import { AdminDashboard } from './components/AdminDashboard';
 import { ConsentBanner } from './components/ConsentBanner';
 import { ConsentProvider } from './contexts/ConsentContext';
 import { useConsent } from './contexts/useConsent';
@@ -98,9 +99,12 @@ function getUrlState() {
   const income = params.get('income');
   const basis = params.get('basis');
 
-  let view: 'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' = 'home';
+  let view: 'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' | 'admin' = 'home';
 
-  if (app === 'income-rank') {
+  // Check for /admin path
+  if (window.location.pathname === '/admin') {
+    view = 'admin';
+  } else if (app === 'income-rank') {
     view = 'income';
   } else if (app === 'world-rank') {
     // If score is present, show result directly
@@ -123,7 +127,7 @@ function AppContent() {
   const { i18n } = useTranslation();
   const { canCollectData } = useConsent();
   const urlState = getUrlState();
-  const [view, setView] = useState<'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income'>(urlState.view);
+  const [view, setView] = useState<'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' | 'admin'>(urlState.view);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [demographics, setDemographics] = useState<DemographicsData | null>(null);
   const [sharedScore] = useState<number | undefined>(urlState.sharedScore);
@@ -226,8 +230,13 @@ function AppContent() {
     setView('home');
   };
 
-  const showBack = view !== 'home';
-  const showHome = view !== 'home' && view !== 'landing' && view !== 'income';
+  const showBack = view !== 'home' && view !== 'admin';
+  const showHome = view !== 'home' && view !== 'landing' && view !== 'income' && view !== 'admin';
+
+  // Admin page has its own layout
+  if (view === 'admin') {
+    return <AdminDashboard />;
+  }
 
   return (
     <Layout
