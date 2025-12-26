@@ -5,6 +5,7 @@ import type { IncomeBasis } from '../data/worldIncomeThresholds';
 import { WORLD_INCOME_THRESHOLDS_USD, WORLD_INCOME_WID } from '../data/worldIncomeThresholds';
 import { formatTopPercent, percentileFromIncome, topPercentFromIncome } from '../utils/incomeRank';
 import { getIncomeClass, getPovertyStatus, POVERTY_LINES, CONSUMER_CLASS } from '../data/incomeInsights';
+import { COUNTRY_CURRENCY, COUNTRY_CURRENCY_BY_CODE } from '../data/countryCurrency';
 import { useConsent } from '../contexts/useConsent';
 import { IncomeChart } from './IncomeChart';
 import { InfoTooltip } from './InfoTooltip';
@@ -12,15 +13,86 @@ import './IncomeRank.css';
 
 // World population constant (2024 estimate)
 const WORLD_POPULATION = 8_000_000_000;
+const COUNTRY_FALLBACK = 'US';
+
+const COUNTRY_LIST = COUNTRY_CURRENCY;
+
+const getCountryCurrency = (code: string) => {
+  const entry = COUNTRY_CURRENCY_BY_CODE[code];
+  return entry?.currency ?? null;
+};
+
+const getCurrencySymbol = (currencyCode: string, locale: string = 'en'): string | null => {
+  if (!currencyCode) return null;
+  try {
+    const formatter = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currencyCode.toUpperCase(),
+      currencyDisplay: 'narrowSymbol',
+    });
+    const parts = formatter.formatToParts(0);
+    const symbolPart = parts.find((p) => p.type === 'currency');
+    return symbolPart?.value ?? null;
+  } catch {
+    return null;
+  }
+};
+
+const formatCurrencyWithSymbol = (currencyCode: string, locale: string = 'en'): string => {
+  const code = currencyCode.toUpperCase();
+  const symbol = getCurrencySymbol(code, locale);
+  if (symbol && symbol !== code) {
+    return `${code} (${symbol})`;
+  }
+  return code;
+};
+
+const detectCountryCode = () => {
+  const fallback = COUNTRY_CURRENCY_BY_CODE[COUNTRY_FALLBACK] ? COUNTRY_FALLBACK : COUNTRY_LIST[0]?.code ?? '';
+  if (typeof navigator === 'undefined') return fallback;
+  const candidate = navigator.languages?.[0] || navigator.language;
+  if (!candidate) return fallback;
+  try {
+    // Intl.Locale provides region parsing for locales like en-US
+    const locale = new Intl.Locale(candidate);
+    const region = locale.region;
+    if (region && COUNTRY_CURRENCY_BY_CODE[region]) return region;
+  } catch {
+    const match = candidate.match(/-([A-Z]{2})/i);
+    if (match) {
+      const region = match[1].toUpperCase();
+      if (COUNTRY_CURRENCY_BY_CODE[region]) return region;
+    }
+  }
+  return fallback;
+};
 
 // Parse URL parameters for shared results
-const getUrlParams = (): { income: number | null; basis: IncomeBasis | null } => {
+const getUrlParams = (): {
+  income: number | null;
+  basis: IncomeBasis | null;
+  country: string | null;
+  currency: string | null;
+  adults: number | null;
+  children: number | null;
+  year: string | null;
+} => {
   const params = new URLSearchParams(window.location.search);
-  const income = params.get('income');
+  const income = params.get('householdIncome') ?? params.get('income');
   const basis = params.get('basis');
+  const country = params.get('country');
+  const currency = params.get('currency');
+  const adults = params.get('adults');
+  const children = params.get('children');
+  const year = params.get('year');
   return {
     income: income ? parseFloat(income) : null,
     basis: (basis === 'PPP' || basis === 'MER') ? basis as IncomeBasis : null,
+    country: country || null,
+    currency: currency || null,
+    adults: adults ? Number.parseInt(adults, 10) : null,
+    children: children ? Number.parseInt(children, 10) : null,
+    year: year || null,
   };
 };
 
@@ -34,6 +106,14 @@ const parseIncomeInput = (value: string) => {
 
   const n = Number.parseFloat(normalized);
   if (!Number.isFinite(n) || n <= 0) return null;
+  return n;
+};
+
+const parseCountInput = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const n = Number.parseInt(trimmed, 10);
+  if (!Number.isFinite(n) || n < 0) return null;
   return n;
 };
 
@@ -109,14 +189,36 @@ export function IncomeRank() {
   const { t, i18n } = useTranslation();
   const { canCollectData } = useConsent();
   const urlParams = getUrlParams();
+  const initialCountryCode = useMemo(() => {
+    if (urlParams.country && COUNTRY_CURRENCY_BY_CODE[urlParams.country]) return urlParams.country;
+    return detectCountryCode();
+  }, [urlParams.country]);
   const [basis, setBasis] = useState<IncomeBasis>(urlParams.basis ?? 'PPP');
-  const [incomeText, setIncomeText] = useState(urlParams.income ? urlParams.income.toString() : '');
-  const [submittedIncome, setSubmittedIncome] = useState<number | null>(urlParams.income);
+  const [countryCode, setCountryCode] = useState<string>(initialCountryCode);
+  const [currencyLocked, setCurrencyLocked] = useState(!urlParams.currency);
+  const [localIncomeText, setLocalIncomeText] = useState(urlParams.income ? urlParams.income.toString() : '');
+  const [householdAdults, setHouseholdAdults] = useState(
+    urlParams.adults !== null ? String(urlParams.adults) : urlParams.income ? '1' : ''
+  );
+  const [householdChildren, setHouseholdChildren] = useState(
+    urlParams.children !== null ? String(urlParams.children) : urlParams.income ? '0' : ''
+  );
+  const [currencyCode, setCurrencyCode] = useState(() => urlParams.currency ?? getCountryCurrency(initialCountryCode) ?? '');
+  const [conversionText, setConversionText] = useState('');
+  const [conversionLocked, setConversionLocked] = useState(true);
+  const [conversionStatus, setConversionStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [conversionMeta, setConversionMeta] = useState<{ date: string | null; source: 'PPP' | 'MER' | null }>({
+    date: null,
+    source: null,
+  });
+  const [incomeYear, setIncomeYear] = useState(urlParams.year ?? String(WORLD_INCOME_WID.year));
+  const [submittedIncome, setSubmittedIncome] = useState<number | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
   const [, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'skipped' | 'error'>('idle');
   const resultRef = useRef<HTMLDivElement>(null);
   const initialLoadRef = useRef(true);
+  const autoSubmitRef = useRef(Boolean(urlParams.income));
   const startedAtRef = useRef<number>(Date.now());
   const sessionIdRef = useRef<string>(randomId());
   const attributionRef = useRef(getAttributionData());
@@ -131,7 +233,78 @@ export function IncomeRank() {
     }
   }, [urlParams.income]);
 
+  useEffect(() => {
+    if (!countryCode) return;
+    if (countryCode === 'OTHER') {
+      setCurrencyLocked(false);
+      setConversionLocked(false);
+      if (!currencyCode) setCurrencyCode('');
+      return;
+    }
+    const currency = getCountryCurrency(countryCode);
+    if (currency) {
+      setCurrencyCode(currency);
+      setCurrencyLocked(true);
+    } else {
+      setCurrencyLocked(false);
+    }
+  }, [countryCode, currencyCode]);
+
+  const regionNames = useMemo(() => {
+    if (typeof Intl !== 'undefined' && 'DisplayNames' in Intl) {
+      try {
+        return new Intl.DisplayNames([i18n.language], { type: 'region' });
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }, [i18n.language]);
+
+  const countryOptions = useMemo(() => {
+    return [...COUNTRY_LIST]
+      .map((entry) => ({
+        code: entry.code,
+        name: regionNames?.of(entry.code) ?? entry.name,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, i18n.language));
+  }, [regionNames, i18n.language]);
+
   const thresholds = WORLD_INCOME_THRESHOLDS_USD[basis];
+  const normalizedCurrency = currencyCode.trim().toUpperCase();
+  const parsedLocalIncome = useMemo(() => parseIncomeInput(localIncomeText), [localIncomeText]);
+  const parsedAdults = useMemo(() => parseCountInput(householdAdults), [householdAdults]);
+  const parsedChildren = useMemo(() => parseCountInput(householdChildren), [householdChildren]);
+  const equivalenceScale = useMemo(() => {
+    if (parsedAdults === null || parsedChildren === null) return null;
+    if (parsedAdults < 1) return null;
+    const additionalAdults = Math.max(0, parsedAdults - 1);
+    return 1 + additionalAdults * 0.5 + parsedChildren * 0.3;
+  }, [parsedAdults, parsedChildren]);
+  const perPersonLocalIncome = useMemo(() => {
+    if (parsedLocalIncome === null || equivalenceScale === null) return null;
+    return parsedLocalIncome / equivalenceScale;
+  }, [parsedLocalIncome, equivalenceScale]);
+  const parsedConversion = useMemo(() => parseIncomeInput(conversionText), [conversionText]);
+  const effectiveConversion = useMemo(() => {
+    if (conversionLocked && conversionStatus === 'error') return null;
+    return parsedConversion;
+  }, [parsedConversion, conversionLocked, conversionStatus]);
+  const convertedIncomeUsd = useMemo(() => {
+    if (perPersonLocalIncome === null || effectiveConversion === null) return null;
+    return perPersonLocalIncome / effectiveConversion;
+  }, [perPersonLocalIncome, effectiveConversion]);
+
+  useEffect(() => {
+    if (!autoSubmitRef.current) return;
+    if (convertedIncomeUsd === null || conversionStatus !== 'success') return;
+    autoSubmitRef.current = false;
+    setSubmittedIncome(convertedIncomeUsd);
+  }, [convertedIncomeUsd, conversionStatus]);
+  const parsedIncomeYear = useMemo(() => {
+    const year = Number.parseInt(incomeYear.trim(), 10);
+    return Number.isFinite(year) ? year : null;
+  }, [incomeYear]);
 
   const percentile = useMemo(
     () => (submittedIncome === null ? null : percentileFromIncome(submittedIncome, thresholds)),
@@ -160,6 +333,8 @@ export function IncomeRank() {
     const digits = p < 0.01 ? 3 : p < 0.1 ? 2 : p < 10 ? 1 : 0;
     return `${p.toLocaleString(i18n.language, { maximumFractionDigits: digits })}%`;
   }, [percentile, i18n.language]);
+
+  
 
   const usd = useMemo(() => {
     try {
@@ -253,6 +428,11 @@ export function IncomeRank() {
     return submittedIncome / 12;
   }, [submittedIncome]);
 
+  const dailyPpp = useMemo(() => {
+    if (convertedIncomeUsd === null) return null;
+    return convertedIncomeUsd / 365;
+  }, [convertedIncomeUsd]);
+
   const oneInPeople = useMemo(() => {
     if (topPercent === null) return null;
     if (!Number.isFinite(topPercent) || topPercent <= 0) return null;
@@ -310,9 +490,139 @@ export function IncomeRank() {
     }));
   }, [dailyIncome, povertyStatus]);
 
+  const fetchPPPConversion = async (iso2: string, year: string) => {
+    const baseUrl = 'https://api.worldbank.org/v2/country';
+    const primaryUrl = `${baseUrl}/${iso2}/indicator/PA.NUS.PPP?date=${year}&format=json`;
+    const fallbackUrl = `${baseUrl}/${iso2}/indicator/PA.NUS.PPP?format=json&per_page=1`;
+
+    const parseWorldBank = (payload: unknown) => {
+      if (!Array.isArray(payload) || payload.length < 2) return null;
+      const data = payload[1];
+      if (!Array.isArray(data)) return null;
+      const entry = data.find((item): item is { value: number; date?: string } => {
+        if (!item || typeof item !== 'object') return false;
+        const maybeValue = (item as { value?: unknown }).value;
+        return typeof maybeValue === 'number';
+      }) ?? null;
+      if (!entry) return null;
+      return { value: entry.value, date: String(entry.date ?? '') };
+    };
+
+    const primary = await fetch(primaryUrl).then((res) => res.json());
+    const parsedPrimary = parseWorldBank(primary);
+    if (parsedPrimary) return parsedPrimary;
+
+    const fallback = await fetch(fallbackUrl).then((res) => res.json());
+    return parseWorldBank(fallback);
+  };
+
+  const fetchMerRate = async (currency: string, year: string) => {
+    const date = `${year}-07-01`;
+    const baseUrl = 'https://api.frankfurter.dev/v1';
+    const primaryUrl = `${baseUrl}/${date}?base=USD&symbols=${currency}`;
+    const fallbackUrl = `${baseUrl}/latest?base=USD&symbols=${currency}`;
+
+    const parseFrankfurter = (payload: unknown) => {
+      if (!payload || typeof payload !== 'object') return null;
+      const data = payload as { rates?: Record<string, number>; date?: string };
+      const rate = data.rates?.[currency];
+      if (!rate || !Number.isFinite(rate)) return null;
+      return { value: rate, date: data.date ? String(data.date) : null };
+    };
+
+    const primary = await fetch(primaryUrl).then((res) => res.json());
+    const parsedPrimary = parseFrankfurter(primary);
+    if (parsedPrimary) return parsedPrimary;
+
+    const fallback = await fetch(fallbackUrl).then((res) => res.json());
+    return parseFrankfurter(fallback);
+  };
+
+  useEffect(() => {
+    if (!conversionLocked) return;
+    if (!normalizedCurrency || countryCode === 'OTHER') {
+      setConversionText('');
+      setConversionStatus('error');
+      setConversionMeta({ date: null, source: null });
+      return;
+    }
+    if (!incomeYear.trim()) {
+      setConversionText('');
+      setConversionStatus('error');
+      setConversionMeta({ date: null, source: null });
+      return;
+    }
+
+    if (normalizedCurrency === 'USD') {
+      setConversionText('1');
+      setConversionStatus('success');
+      setConversionMeta({ date: null, source: basis });
+      return;
+    }
+
+    let isActive = true;
+    setConversionStatus('loading');
+
+    const run = async () => {
+      try {
+        if (basis === 'PPP') {
+          const result = await fetchPPPConversion(countryCode.toLowerCase(), incomeYear);
+          if (!result) throw new Error('PPP unavailable');
+          if (!isActive) return;
+          setConversionText(String(result.value));
+          setConversionMeta({ date: result.date || null, source: 'PPP' });
+          setConversionStatus('success');
+          return;
+        }
+
+        const result = await fetchMerRate(normalizedCurrency, incomeYear);
+        if (!result) throw new Error('MER unavailable');
+        if (!isActive) return;
+        setConversionText(String(result.value));
+        setConversionMeta({ date: result.date || null, source: 'MER' });
+        setConversionStatus('success');
+      } catch (error) {
+        if (!isActive) return;
+        setConversionText('');
+        setConversionStatus('error');
+        setConversionMeta({ date: null, source: null });
+      }
+    };
+
+    void run();
+    return () => {
+      isActive = false;
+    };
+  }, [basis, countryCode, incomeYear, normalizedCurrency, conversionLocked]);
+
+  const handleCurrencyToggle = () => {
+    if (currencyLocked) {
+      setCurrencyLocked(false);
+      return;
+    }
+    if (countryCode && countryCode !== 'OTHER') {
+      const currency = getCountryCurrency(countryCode);
+      if (currency) {
+        setCurrencyCode(currency);
+        setCurrencyLocked(true);
+        return;
+      }
+    }
+    setCurrencyLocked(false);
+  };
+
+  const handleConversionToggle = () => {
+    if (conversionLocked) {
+      setConversionLocked(false);
+      setConversionStatus('idle');
+      setConversionMeta({ date: null, source: null });
+      return;
+    }
+    setConversionLocked(true);
+  };
+
   const handleCheck = () => {
-    const val = parseIncomeInput(incomeText);
-    if (val === null) return;
+    if (convertedIncomeUsd === null) return;
 
     setIsCalculating(true);
     setSaveState('idle');
@@ -320,7 +630,7 @@ export function IncomeRank() {
 
     // Simulate calculation delay for effect
     setTimeout(() => {
-      setSubmittedIncome(val);
+      setSubmittedIncome(convertedIncomeUsd);
       setIsCalculating(false);
       // Wait for re-render then scroll
       setTimeout(() => {
@@ -333,9 +643,9 @@ export function IncomeRank() {
       return;
     }
 
-    const computedPercentile = percentileFromIncome(val, thresholds);
-    const computedTopPercent = topPercentFromIncome(val, thresholds);
-    const computedMedianMultiple = highlight.median ? val / highlight.median : null;
+    const computedPercentile = percentileFromIncome(convertedIncomeUsd, thresholds);
+    const computedTopPercent = topPercentFromIncome(convertedIncomeUsd, thresholds);
+    const computedMedianMultiple = highlight.median ? convertedIncomeUsd / highlight.median : null;
 
     setSaveState('saving');
     submitAppData({
@@ -357,7 +667,18 @@ export function IncomeRank() {
 
       // App-specific payload
       payload: {
-        incomeAnnualUsd: val,
+        incomeAnnualUsd: convertedIncomeUsd,
+        incomeAnnualLocal: parsedLocalIncome,
+        perPersonIncomeAnnualLocal: perPersonLocalIncome,
+        householdAdults: parsedAdults,
+        householdChildren: parsedChildren,
+        equivalenceScale,
+        currencyCode: normalizedCurrency || null,
+        countryCode: countryCode === 'OTHER' ? null : countryCode,
+        incomeYear: parsedIncomeYear,
+        conversionFactor: effectiveConversion,
+        conversionSource: conversionMeta.source,
+        conversionDate: conversionMeta.date,
         basis,
         percentile: computedPercentile,
         topPercent: computedTopPercent,
@@ -384,7 +705,12 @@ export function IncomeRank() {
     const baseUrl = window.location.origin + window.location.pathname;
     const params = new URLSearchParams();
     params.set('app', 'income-rank');
-    if (submittedIncome !== null) params.set('income', String(submittedIncome));
+    if (parsedLocalIncome !== null) params.set('householdIncome', String(parsedLocalIncome));
+    if (parsedAdults !== null) params.set('adults', String(parsedAdults));
+    if (parsedChildren !== null) params.set('children', String(parsedChildren));
+    if (countryCode) params.set('country', countryCode);
+    if (normalizedCurrency) params.set('currency', normalizedCurrency);
+    if (incomeYear) params.set('year', incomeYear);
     params.set('basis', basis);
     const shareUrl = `${baseUrl}?${params.toString()}`;
 
@@ -414,6 +740,14 @@ export function IncomeRank() {
   };
 
   const basisLabel = basis === 'PPP' ? t('PPP (cost of living adjusted)') : t('Market exchange rate (MER)');
+  const conversionLabel = basis === 'PPP'
+    ? t('PPP conversion factor (local currency per international $)')
+    : t('Exchange rate (local currency per USD)');
+  const canCalculate = convertedIncomeUsd !== null;
+  const isConversionLoading = conversionLocked && conversionStatus === 'loading';
+  const basisHelp = basis === 'PPP'
+    ? t('PPP adjusts for cost of living and is best for comparing living standards across countries.')
+    : t('MER uses market exchange rates. Useful for nominal comparisons but can swing with currency markets.');
   // These are available for future use if needed
   void WORLD_INCOME_WID.countryCodeByBasis[basis];
   void WORLD_INCOME_WID.sourceFileByBasis[basis];
@@ -441,7 +775,7 @@ export function IncomeRank() {
           <div className="income-rank-kicker">{t('New')}</div>
           <h1 className="income-rank-title">{t('Income Rank')}</h1>
           <p className="income-rank-subtitle">
-            {t('Enter your annual income to estimate where you stand globally')}
+            {t('Enter your household take-home income to estimate where you stand globally.')}
           </p>
         </motion.div>
 
@@ -452,33 +786,215 @@ export function IncomeRank() {
           transition={{ delay: 0.18 }}
         >
           <div className="income-row">
+            <label className="income-label" htmlFor="country-select">
+              {t('Country or region')}
+            </label>
+            <div className="income-select-wrap">
+              <select
+                id="country-select"
+                className="income-select"
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+              >
+                {countryOptions.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.name}
+                  </option>
+                ))}
+                <option value="OTHER">{t('Other / Not listed')}</option>
+              </select>
+            </div>
+            <div className="income-helper-row">
+              <span className="income-helper">
+                {countryCode === 'OTHER'
+                  ? t('If your country is not listed, enter the currency manually.')
+                  : currencyLocked
+                    ? t('Currency auto-set to {{currency}} based on your country.', { currency: formatCurrencyWithSymbol(normalizedCurrency, i18n.language) || t('Unknown') })
+                    : t('Custom currency enabled.')}
+              </span>
+              {countryCode !== 'OTHER' && (
+                <button
+                  type="button"
+                  className="income-link-btn"
+                  onClick={handleCurrencyToggle}
+                >
+                  {currencyLocked ? t('Edit currency') : t('Use country currency')}
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="income-row">
             <label className="income-label" htmlFor="income-input">
-              {t('Annual income')} <span className="income-hint">{t('USD')}</span>
+              {t('Household annual income (after tax)')} <span className="income-hint">{normalizedCurrency ? formatCurrencyWithSymbol(normalizedCurrency, i18n.language) : t('Local currency')}</span>
             </label>
             <div className="income-input-group">
               <div className="income-input-wrap">
-                <span className="income-prefix">$</span>
+                {currencyLocked ? (
+                  <span className="income-currency-pill" aria-label={t('Currency code (ISO 4217)')}>
+                    {normalizedCurrency ? formatCurrencyWithSymbol(normalizedCurrency, i18n.language) : t('Unknown')}
+                  </span>
+                ) : (
+                  <input
+                    className="income-currency"
+                    inputMode="text"
+                    autoComplete="off"
+                    maxLength={3}
+                    placeholder={t('USD')}
+                    value={currencyCode}
+                    onChange={(e) => setCurrencyCode(e.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 3))}
+                    aria-label={t('Currency code (ISO 4217)')}
+                  />
+                )}
+                <span className="income-divider" aria-hidden="true"></span>
                 <input
                   id="income-input"
                   className="income-input"
                   inputMode="decimal"
                   autoComplete="off"
                   placeholder={t('Example: 50,000')}
-                  value={incomeText}
-                  onChange={(e) => setIncomeText(e.target.value)}
+                  value={localIncomeText}
+                  onChange={(e) => setLocalIncomeText(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  aria-label={t('Annual income')}
+                  aria-label={t('Household annual income (after tax)')}
                 />
               </div>
               <button
                 className="income-check-btn"
                 onClick={handleCheck}
-                disabled={!incomeText || isCalculating}
+                disabled={!canCalculate || isCalculating || isConversionLoading}
               >
-                {isCalculating ? t('Calculating...') : t('Check Rank')}
+                {isConversionLoading ? t('Fetching conversion rate...') : isCalculating ? t('Calculating...') : t('Check Rank')}
               </button>
             </div>
+            <div className="income-helper">
+              {t('Enter your total household take-home income in your local currency, including wages and other income.')}
+            </div>
           </div>
+
+          <div className="income-row">
+            <div className="income-label">{t('Household members')}</div>
+            <div className="income-row-grid">
+              <div className="income-field">
+                <label className="income-label" htmlFor="household-adults">
+                  {t('Adults')}
+                </label>
+                <div className="income-input-wrap">
+                  <input
+                    id="household-adults"
+                    className="income-input income-input-compact"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder="1"
+                    value={householdAdults}
+                    onChange={(e) => setHouseholdAdults(e.target.value.replace(/[^\d]/g, ''))}
+                    onKeyDown={handleKeyDown}
+                    aria-label={t('Number of adults in household')}
+                  />
+                </div>
+              </div>
+              <div className="income-field">
+                <label className="income-label" htmlFor="household-children">
+                  {t('Children')}
+                </label>
+                <div className="income-input-wrap">
+                  <input
+                    id="household-children"
+                    className="income-input income-input-compact"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder="0"
+                    value={householdChildren}
+                    onChange={(e) => setHouseholdChildren(e.target.value.replace(/[^\d]/g, ''))}
+                    onKeyDown={handleKeyDown}
+                    aria-label={t('Number of children in household')}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="income-helper">
+              {t('We adjust household income using the OECD-modified equivalence scale.')}
+              <span> {t('Scale = 1 + 0.5 x (additional adults) + 0.3 x (children).')}</span>
+              {equivalenceScale !== null && (
+                <span> {t('Equivalence scale: {{scale}}', { scale: equivalenceScale.toFixed(2) })}</span>
+              )}
+            </div>
+          </div>
+
+          <div className="income-row income-row-grid">
+            <div className="income-field">
+              <label className="income-label" htmlFor="income-year-input">
+                {t('Income year')}
+              </label>
+              <div className="income-input-wrap">
+                <input
+                  id="income-year-input"
+                  className="income-input income-input-compact"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={4}
+                  placeholder={String(WORLD_INCOME_WID.year)}
+                  value={incomeYear}
+                  onChange={(e) => setIncomeYear(e.target.value.replace(/[^\d]/g, '').slice(0, 4))}
+                  onKeyDown={handleKeyDown}
+                  aria-label={t('Income year')}
+                />
+              </div>
+              <div className="income-helper">{t('Use the year your income is based on.')}</div>
+            </div>
+            <div className="income-field">
+              <label className="income-label" htmlFor="conversion-input">
+                {conversionLabel}
+              </label>
+              <div className="income-input-wrap">
+                <input
+                  id="conversion-input"
+                  className="income-input income-input-compact"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  placeholder={t('Example: 1,320.5')}
+                  value={conversionText}
+                  onChange={(e) => setConversionText(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={conversionLocked}
+                  aria-label={conversionLabel}
+                />
+              </div>
+              <div className="income-helper-row">
+                <span className="income-helper">
+                  {conversionLocked
+                    ? conversionStatus === 'loading'
+                      ? t('Fetching conversion rate...')
+                      : conversionStatus === 'success'
+                        ? t('Auto conversion from {{source}}', {
+                            source: conversionMeta.source === 'PPP' ? t('PPP') : t('Market exchange rate (MER)'),
+                          })
+                        : t('Auto conversion failed. Enter manually.')
+                    : t('Manual conversion enabled.')}
+                  {conversionLocked && conversionStatus === 'success' && conversionMeta.date
+                    ? ` ${t('Updated {{date}}', { date: conversionMeta.date })}`
+                    : ''}
+                </span>
+                <button
+                  type="button"
+                  className="income-link-btn"
+                  onClick={handleConversionToggle}
+                >
+                  {conversionLocked ? t('Edit conversion') : t('Use auto conversion')}
+                </button>
+              </div>
+              <div className="income-helper">{t('If your income is already in USD, use 1.')}</div>
+            </div>
+          </div>
+
+          {convertedIncomeUsd !== null && (
+            <div className="income-row">
+              <div className="income-helper">
+                {t('Per-person income (USD)')}:{' '}
+                <span className="mono">{usd.format(convertedIncomeUsd)}</span>
+              </div>
+            </div>
+          )}
 
           <div className="income-row">
             <div className="income-label">{t('Income basis')}</div>
@@ -500,6 +1016,7 @@ export function IncomeRank() {
                 <span className="basis-chip-sub">{t('Exchange rate')}</span>
               </button>
             </div>
+            <div className="basis-help">{basisHelp}</div>
           </div>
         </motion.div>
 
@@ -570,6 +1087,13 @@ export function IncomeRank() {
                         {t('Out of 8 billion people, only')} <span className="mono">{peopleInGroup.toLocaleString(i18n.language)}</span> {t('are in this group.')}
                       </p>
                     )}
+                    <p className="result-note">
+                      {t('Global ranking uses adult pre-tax income (WID).')}{' '}
+                      {t('Your input is after-tax household income per person, so this is an estimate.')}{' '}
+                      {basis === 'MER'
+                        ? t('MER results can change with exchange rates.')
+                        : t('PPP reflects cost of living differences.')}
+                    </p>
                   </div>
                   <div className="result-stamp" aria-label={t('Income rank result')}>
                     <div className="stamp-inner">

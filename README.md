@@ -1,113 +1,30 @@
-# Awesome Rank
+# World Rank
 
-Discover where you stand among 8 billion people. Take our lifestyle quiz or calculate your global income ranking.
+세계 80억 인구 속에서 나의 위치를 간단히 확인할 수 있는 체험형 데이터 앱입니다. 생활 방식 설문(라이프스타일 랭크)과 소득 랭크 계산기를 제공합니다.
 
-## Features
+## 주요 기능
 
-### Awesome Rank (Lifestyle Quiz)
-- 20+ questions to measure your global lifestyle ranking
-- Categories: Infrastructure, Connectivity, Assets, Living Standards
-- Sophisticated Bayesian scoring algorithm
-- Results: Top X%, Tier badge, Estimated population
+- **라이프스타일 랭크**: 생활 인프라, 연결성, 자산, 생활 수준 등 질문에 답하면 전 세계 기준 백분위와 티어를 보여줍니다.
+- **소득 랭크**: 연간 소득을 입력하면 전 세계 소득 분포에서의 위치를 계산합니다.
+- **PPP / MER 기준 비교**: 생활비 기준(PPP)과 시장 환율(MER)을 선택해 비교할 수 있습니다.
+- **다국어 지원**: 여러 언어로 이용 가능합니다.
 
-### Income Rank (Income Calculator)
-- Calculate your global income ranking by entering annual income
-- Dual basis support: PPP (Purchasing Power Parity) / MER (Market Exchange Rate)
-- Based on WID.world 2024 data
-- Calculated in-browser; anonymized results may be stored if you allow data collection
+## 사용 방법 (엔드유저 가이드)
 
-### Multilingual Support
-14 languages supported: English, Korean, Spanish, Portuguese, Chinese, Japanese, French, German, Italian, Russian, Hindi, Arabic, Indonesian, Turkish
+### 1) 라이프스타일 랭크
+1. 질문에 차례대로 답합니다.
+2. 결과 화면에서 전 세계 기준 백분위와 티어를 확인합니다.
 
-## Tech Stack
+### 2) 소득 랭크
+1. **국가/지역**을 선택합니다(통화가 자동 설정됩니다).
+2. **연간 소득**(현지 통화)을 입력합니다.
+3. **PPP 또는 MER** 기준을 선택합니다.
+4. 필요 시 **환산계수(또는 환율)** 를 입력합니다.
+5. 결과에서 전 세계 상위 퍼센트와 기준 지표를 확인합니다.
 
-| Area | Technology |
-|------|------------|
-| Frontend | React 19, TypeScript, Vite |
-| Backend | Express, SQLite (libSQL/Turso) |
-| Animation | Framer Motion |
-| i18n | i18next, react-i18next |
+> 참고: 소득 결과는 기준(PPP/MER), 연도, 환산계수에 따라 달라질 수 있습니다.
 
-## Project Structure
+## 데이터/출처
 
-```
-world-rank/
-├── frontend/                # React + Vite + TypeScript
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── contexts/        # Context (consent management, etc.)
-│   │   ├── data/            # Questions, income thresholds
-│   │   ├── locales/         # Translation files (14 languages)
-│   │   └── utils/           # Utility functions
-│   └── package.json
-├── server/                  # Express backend
-│   ├── server.js            # API endpoints
-│   └── data/                # SQLite database
-└── package.json             # Root scripts
-```
+- 소득 분포: World Inequality Database (WID.world) 기준
 
-## Installation & Setup
-
-### Requirements
-- Node.js 18+
-- npm
-
-### Install
-
-```bash
-# Clone repository
-git clone https://github.com/hurxxxx/worldrank.git
-cd worldrank
-
-# Install all dependencies (frontend + server)
-npm run install:all
-```
-
-### Development
-
-```bash
-# Frontend dev server (Vite)
-npm run dev
-
-# Backend server (dev mode)
-npm run server:dev
-```
-
-### Production
-
-```bash
-# Build frontend
-npm run build
-
-# Start production server
-npm run start
-```
-
-## Adding Translation Keys
-
-1. Use `t()` function in components:
-```tsx
-import { useTranslation } from 'react-i18next';
-
-const { t } = useTranslation();
-return <p>{t('your_translation_key')}</p>;
-```
-
-2. Run parser to extract keys:
-```bash
-cd frontend && npm run i18n:parse
-```
-
-3. Add translations in each language file under `frontend/src/locales/`
-
-## API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/submit` | POST | Submit app responses (quiz + income) |
-| `/api/stats` | GET | Get recent responses (100) |
-| `/api/stats/summary` | GET | Aggregated statistics |
-
-## License
-
-MIT
