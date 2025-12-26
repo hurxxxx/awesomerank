@@ -758,14 +758,26 @@ export function IncomeRank() {
           transition={{ delay: 0.32 }}
         >
           <div className="foot-line">
-            <span className="foot-label">{t('Data')}</span>
+            <span className="foot-label">{t('Data source')}</span>
             <span className="foot-value">
-              {t('WID thresholds (wid.world)')} • {WORLD_INCOME_WID.variable} • {worldCode} • {WORLD_INCOME_WID.year}
+              <a href="https://wid.world/" target="_blank" rel="noopener noreferrer">
+                {t('World Inequality Database (WID.world)')}
+              </a>
             </span>
           </div>
           <div className="foot-line">
-            <span className="foot-label">{t('Source')}</span>
-            <span className="foot-value mono">{source}</span>
+            <span className="foot-label">{t('Dataset')}</span>
+            <span className="foot-value mono">
+              {t('Pre-tax national income thresholds')} ({WORLD_INCOME_WID.year})
+            </span>
+          </div>
+          <div className="foot-line">
+            <span className="foot-label">{t('Methodology')}</span>
+            <span className="foot-value">
+              <a href="https://wid.world/methodology/" target="_blank" rel="noopener noreferrer">
+                {t('Distributional National Accounts (DINA)')}
+              </a>
+            </span>
           </div>
         </motion.div>
       </motion.div>
