@@ -4,6 +4,8 @@
   border-radius: 16px;
   padding: 20px;
   margin: 20px 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .chart-title {
@@ -144,6 +146,7 @@
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   font-family: 'IBM Plex Mono', monospace;
+  word-break: break-word;
 }
 
 /* Daily income bar */
@@ -236,5 +239,88 @@
 
   .threshold-label {
     margin-bottom: 0;
+  }
+}
+
+@media (max-width: 375px) {
+  .income-chart {
+    padding: 12px;
+    margin: 16px 0;
+    border-radius: 12px;
+  }
+
+  .chart-title {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .chart-curve-container {
+    margin-bottom: 20px;
+  }
+
+  .chart-bar-container {
+    margin-bottom: 20px;
+  }
+
+  .chart-bar-labels {
+    font-size: 9px;
+  }
+
+  .chart-threshold {
+    padding: 8px 10px;
+  }
+
+  .threshold-label {
+    font-size: 9px;
+  }
+
+  .threshold-value {
+    font-size: 12px;
+  }
+
+  .chart-daily {
+    padding-top: 12px;
+  }
+
+  .daily-label {
+    font-size: 10px;
+  }
+
+  .daily-value {
+    font-size: 12px;
+  }
+
+  .chart-bar-you {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+}
+
+@media (max-width: 320px) {
+  .income-chart {
+    padding: 10px;
+    margin: 12px 0;
+  }
+
+  .chart-title {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .chart-bar-track {
+    height: 10px;
+  }
+
+  .threshold-value {
+    font-size: 11px;
+  }
+
+  .daily-bar-container {
+    gap: 8px;
+  }
+
+  .daily-value {
+    font-size: 11px;
   }
 }

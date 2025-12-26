@@ -6,6 +6,9 @@
     justify-content: center;
     padding: clamp(1rem, 4vw, 1.5rem) var(--space-md);
     box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .income-rank-card {
@@ -17,6 +20,7 @@
     border: 1px solid var(--glass-border);
     border-radius: 20px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .income-rank-header {
@@ -104,6 +108,7 @@
     line-height: 1.5;
     display: grid;
     gap: 0.4rem;
+    word-break: break-word;
 }
 
 .intro-actions {
@@ -118,6 +123,8 @@
 .income-row {
     display: grid;
     gap: 0.5rem;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .income-label {
@@ -154,6 +161,8 @@
     border-radius: 12px;
     padding: 0.75rem 1rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .income-select-wrap {
@@ -163,6 +172,8 @@
     border: 1px solid var(--glass-border);
     border-radius: 12px;
     padding: 0.6rem 0.9rem;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .income-select {
@@ -228,6 +239,8 @@
     font-family: var(--font-main);
     font-size: 1.1rem;
     padding: 0;
+    min-width: 0;
+    width: 100%;
 }
 
 .income-input::placeholder {
@@ -258,12 +271,15 @@
 .income-field {
     display: grid;
     gap: 0.5rem;
+    min-width: 0;
 }
 
 .income-helper {
     color: var(--text-secondary);
     font-size: 0.75rem;
     line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .income-unit-display {
@@ -469,6 +485,7 @@
     color: rgba(225, 252, 255, 0.86);
     font-size: 0.95rem;
     line-height: 1.35;
+    word-break: break-word;
 }
 
 .result-note {
@@ -476,6 +493,7 @@
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.75rem;
     letter-spacing: 0.02em;
+    word-break: break-word;
 }
 
 .result-meta {
@@ -570,6 +588,7 @@
     justify-content: space-between;
     gap: 0.75rem;
     margin-bottom: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .poverty-title {
@@ -685,6 +704,7 @@
     min-width: 0;
     color: var(--text-primary);
     line-height: 1.25;
+    word-break: break-word;
 }
 
 .status-gap {
@@ -890,13 +910,226 @@
     }
 }
 
+@media (max-width: 400px) {
+    .poverty-note {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+    }
+}
+
 @media (max-width: 375px) {
     .income-rank-card {
         border-radius: 16px;
     }
 
+    .income-input-group {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .income-check-btn {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        min-width: unset;
+    }
+
+    .income-row-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .income-breakdown {
+        grid-template-columns: 1fr;
+    }
+
+    .result-stamp {
+        width: 80px;
+        height: 80px;
+    }
+
+    .stamp-inner {
+        width: 64px;
+        height: 64px;
+    }
+
+    .stamp-top {
+        font-size: 0.6rem;
+    }
+
+    .stamp-value {
+        font-size: 0.85rem;
+    }
+
     .basis-chip {
         padding: 0.65rem 0.75rem;
+    }
+
+    .foot-line {
+        grid-template-columns: 1fr;
+        gap: 0.15rem;
+    }
+
+    .income-rank-title {
+        font-size: 1.6rem;
+    }
+
+    .income-rank-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .result-meaning {
+        font-size: 0.85rem;
+    }
+
+    .intro-list {
+        font-size: 0.8rem;
+        padding-left: 0.9rem;
+    }
+
+    .income-currency-pill {
+        min-width: 3rem;
+        font-size: 0.8rem;
+    }
+
+    .income-currency {
+        width: 3rem;
+        font-size: 0.8rem;
+    }
+
+    .income-input-wrap {
+        padding: 0.65rem 0.75rem;
+    }
+
+    .status-threshold {
+        font-size: 0.7rem;
+    }
+
+    .poverty-status {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .income-rank {
+        padding: 0.75rem var(--space-sm);
+    }
+
+    .income-rank-card {
+        border-radius: 12px;
+    }
+
+    .income-rank-header {
+        padding: 1rem 0.875rem 0;
+    }
+
+    .income-rank-form {
+        padding: 1rem 0.875rem 0;
+    }
+
+    .income-rank-result {
+        padding: 1rem 0.875rem;
+    }
+
+    .income-rank-intro {
+        padding: 1rem 0.875rem 0;
+    }
+
+    .income-rank-title {
+        font-size: 1.4rem;
+    }
+
+    .income-rank-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .income-label {
+        font-size: 0.8rem;
+    }
+
+    .income-input {
+        font-size: 0.95rem;
+    }
+
+    .income-helper {
+        font-size: 0.7rem;
+    }
+
+    .basis-chip {
+        padding: 0.55rem 0.65rem;
+    }
+
+    .basis-chip-title {
+        font-size: 0.75rem;
+    }
+
+    .basis-chip-sub {
+        font-size: 0.7rem;
+    }
+
+    .result-title {
+        font-size: 0.95rem;
+    }
+
+    .result-meaning {
+        font-size: 0.8rem;
+    }
+
+    .result-note {
+        font-size: 0.7rem;
+    }
+
+    .poverty-title {
+        font-size: 0.75rem;
+    }
+
+    .income-chip {
+        padding: 0.5rem 0.6rem;
+    }
+
+    .income-chip-value {
+        font-size: 0.85rem;
+    }
+
+    .status-item {
+        font-size: 0.8rem;
+        padding: 0.45rem 0.55rem;
+    }
+
+    .detail-card {
+        padding: 0.6rem;
+    }
+
+    .detail-value {
+        font-size: 1rem;
+    }
+
+    .intro-card {
+        padding: 1rem;
+    }
+
+    .intro-title {
+        font-size: 0.95rem;
+    }
+
+    .intro-copy {
+        font-size: 0.8rem;
+    }
+
+    .intro-list {
+        font-size: 0.75rem;
+    }
+
+    .income-rank-foot {
+        padding: 0.75rem 0.875rem 0.9rem;
+    }
+
+    .foot-label {
+        font-size: 0.6rem;
+    }
+
+    .foot-value {
+        font-size: 0.75rem;
     }
 }
 
