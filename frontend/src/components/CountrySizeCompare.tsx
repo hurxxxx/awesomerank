@@ -662,53 +662,83 @@ export const CountrySizeCompare = () => {
 
                     {isFullscreen && (
                         <div className="compare-fullscreen">
-                            <div className="fullscreen-header">
-                                <div className="fullscreen-title">{t('Overlay view')}</div>
+                            <div className={`fullscreen-map-stage${isDragging ? ' dragging' : ''}`}>
+                                <svg
+                                    viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+                                    role="img"
+                                    aria-label={t('Overlay of {{countryA}} and {{countryB}}', {
+                                        countryA: primary.label,
+                                        countryB: secondary.label,
+                                    })}
+                                    onPointerDown={handlePointerDown}
+                                    onPointerMove={handlePointerMove}
+                                    onPointerUp={handlePointerEnd}
+                                    onPointerCancel={handlePointerEnd}
+                                >
+                                    {overlay && (
+                                        <>
+                                            <path
+                                                className="map-path primary"
+                                                d={overlay.primaryPath}
+                                                transform={overlay.primaryTransform}
+                                            />
+                                            <path
+                                                className="map-path secondary"
+                                                d={overlay.secondaryPath}
+                                                transform={overlay.secondaryTransform}
+                                            />
+                                        </>
+                                    )}
+                                </svg>
+                            </div>
+                            <div className="fullscreen-overlay-top">
+                                <div className="fullscreen-legend">
+                                    <span className="legend-item primary">
+                                        <span className="legend-dot" />
+                                        {primary.label}
+                                    </span>
+                                    <span className="legend-item secondary">
+                                        <span className="legend-dot" />
+                                        {secondary.label}
+                                    </span>
+                                </div>
                                 <button
                                     type="button"
-                                    className="fullscreen-toggle"
+                                    className="fullscreen-close"
                                     onClick={() => setIsFullscreen(false)}
+                                    aria-label={t('Exit full screen')}
                                 >
-                                    {t('Exit full screen')}
+                                    ✕
                                 </button>
                             </div>
-                            <div className="fullscreen-controls">
-                                <div className="country-compare-select">
-                                    <label htmlFor="country-primary-full">{t('Country A')}</label>
+                            <div className="fullscreen-overlay-bottom">
+                                <div className="fullscreen-selectors">
                                     <select
                                         id="country-primary-full"
                                         value={primaryId}
                                         onChange={(event) => setPrimaryId(event.target.value)}
+                                        aria-label={t('Country A')}
                                     >
-                                        <option value="" disabled>
-                                            {t('Select a country')}
-                                        </option>
                                         {countries.map((country) => (
                                             <option key={country.id} value={country.id}>
                                                 {country.label}
                                             </option>
                                         ))}
                                     </select>
-                                </div>
-                                <button
-                                    className="country-compare-swap"
-                                    type="button"
-                                    onClick={handleSwap}
-                                    aria-label={t('Swap countries')}
-                                >
-                                    <span className="swap-icon">{'<>'}</span>
-                                    <span>{t('Swap')}</span>
-                                </button>
-                                <div className="country-compare-select">
-                                    <label htmlFor="country-secondary-full">{t('Country B')}</label>
+                                    <button
+                                        className="fullscreen-swap"
+                                        type="button"
+                                        onClick={handleSwap}
+                                        aria-label={t('Swap countries')}
+                                    >
+                                        ⇄
+                                    </button>
                                     <select
                                         id="country-secondary-full"
                                         value={secondaryId}
                                         onChange={(event) => setSecondaryId(event.target.value)}
+                                        aria-label={t('Country B')}
                                     >
-                                        <option value="" disabled>
-                                            {t('Select a country')}
-                                        </option>
                                         {countries.map((country) => (
                                             <option key={country.id} value={country.id}>
                                                 {country.label}
@@ -716,120 +746,62 @@ export const CountrySizeCompare = () => {
                                         ))}
                                     </select>
                                 </div>
-                            </div>
-                            <div className="country-compare-map fullscreen">
-                                <div className="map-header">
-                                    <div className="map-title">
-                                        <h2>{t('Overlay view')}</h2>
-                                        <p>{t('Equal-area projection keeps the size ratio precise.')}</p>
+                                <div className="fullscreen-tools">
+                                    <div className="fullscreen-zoom">
+                                        <button
+                                            type="button"
+                                            className="zoom-button"
+                                            onClick={() => handleZoomChange(zoom - ZOOM_STEP)}
+                                            aria-label={t('Zoom out')}
+                                            disabled={zoom <= MIN_ZOOM + 0.001}
+                                        >
+                                            −
+                                        </button>
+                                        <input
+                                            type="range"
+                                            className="zoom-slider"
+                                            min={MIN_ZOOM}
+                                            max={MAX_ZOOM}
+                                            step={ZOOM_STEP}
+                                            value={zoom}
+                                            onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
+                                            aria-label={t('Zoom level')}
+                                        />
+                                        <span className="zoom-readout mono">{Math.round(zoom * 100)}%</span>
+                                        <button
+                                            type="button"
+                                            className="zoom-button"
+                                            onClick={() => handleZoomChange(zoom + ZOOM_STEP)}
+                                            aria-label={t('Zoom in')}
+                                            disabled={zoom >= MAX_ZOOM - 0.001}
+                                        >
+                                            +
+                                        </button>
                                     </div>
-                                    <div className="map-tools">
-                                        <div className="map-legend">
-                                            <span className="legend-item primary">
-                                                <span className="legend-dot" />
-                                                {primary.label}
-                                            </span>
-                                            <span className="legend-item secondary">
-                                                <span className="legend-dot" />
-                                                {secondary.label}
-                                            </span>
-                                        </div>
-                                        <div className="map-controls">
-                                            <label htmlFor="overlay-zoom-full">{t('Zoom')}</label>
-                                            <div className="map-zoom">
-                                                <button
-                                                    type="button"
-                                                    className="zoom-button"
-                                                    onClick={() => handleZoomChange(zoom - ZOOM_STEP)}
-                                                    aria-label={t('Zoom out')}
-                                                    disabled={zoom <= MIN_ZOOM + 0.001}
-                                                >
-                                                    -
-                                                </button>
-                                                <input
-                                                    id="overlay-zoom-full"
-                                                    type="range"
-                                                    min={MIN_ZOOM}
-                                                    max={MAX_ZOOM}
-                                                    step={ZOOM_STEP}
-                                                    value={zoom}
-                                                    onChange={(event) => handleZoomChange(Number(event.target.value))}
-                                                    aria-label={t('Zoom')}
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="zoom-button"
-                                                    onClick={() => handleZoomChange(zoom + ZOOM_STEP)}
-                                                    aria-label={t('Zoom in')}
-                                                    disabled={zoom >= MAX_ZOOM - 0.001}
-                                                >
-                                                    +
-                                                </button>
-                                                <span className="map-zoom-readout mono">
-                                                    {Math.round(zoom * 100)}%
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="map-controls">
-                                            <label>{t('Move')}</label>
-                                            <div className="map-move-toggle" role="group" aria-label={t('Move')}>
-                                                <button
-                                                    type="button"
-                                                    className={`map-move-button${dragTarget === 'both' ? ' active' : ''}`}
-                                                    onClick={() => setDragTarget('both')}
-                                                >
-                                                    {t('Pan view')}
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className={`map-move-button${dragTarget === 'primary' ? ' active' : ''}`}
-                                                    onClick={() => setDragTarget('primary')}
-                                                >
-                                                    {t('Move {{country}}', { country: primary.label })}
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className={`map-move-button${dragTarget === 'secondary' ? ' active' : ''}`}
-                                                    onClick={() => setDragTarget('secondary')}
-                                                >
-                                                    {t('Move {{country}}', { country: secondary.label })}
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div className="fullscreen-move-toggle">
+                                        <button
+                                            type="button"
+                                            className={dragTarget === 'both' ? 'active' : ''}
+                                            onClick={() => setDragTarget('both')}
+                                        >
+                                            {t('Pan view')}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={dragTarget === 'primary' ? 'active' : ''}
+                                            onClick={() => setDragTarget('primary')}
+                                        >
+                                            {primary.label}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={dragTarget === 'secondary' ? 'active' : ''}
+                                            onClick={() => setDragTarget('secondary')}
+                                        >
+                                            {secondary.label}
+                                        </button>
                                     </div>
                                 </div>
-                                <div className={`map-stage${isDragging ? ' dragging' : ''}`}>
-                                    <svg
-                                        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
-                                        role="img"
-                                        aria-label={t('Overlay of {{countryA}} and {{countryB}}', {
-                                            countryA: primary.label,
-                                            countryB: secondary.label,
-                                        })}
-                                        onPointerDown={handlePointerDown}
-                                        onPointerMove={handlePointerMove}
-                                        onPointerUp={handlePointerEnd}
-                                        onPointerCancel={handlePointerEnd}
-                                    >
-                                        {overlay && (
-                                            <>
-                                                <path
-                                                    className="map-path primary"
-                                                    d={overlay.primaryPath}
-                                                    transform={overlay.primaryTransform}
-                                                />
-                                                <path
-                                                    className="map-path secondary"
-                                                    d={overlay.secondaryPath}
-                                                    transform={overlay.secondaryTransform}
-                                                />
-                                            </>
-                                        )}
-                                    </svg>
-                                </div>
-                                <p className="map-footnote">
-                                    {t('Map data: Natural Earth 1:{{scale}}.', { scale: resolution })}
-                                </p>
                             </div>
                         </div>
                     )}
@@ -841,20 +813,10 @@ export const CountrySizeCompare = () => {
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ duration: 0.6 }}
                         >
-                        <div className="map-header">
-                            <div className="map-title">
+                        <div className="map-header-compact">
+                            <div className="map-title-row">
                                 <h2>{t('Overlay view')}</h2>
-                                <p>{t('Equal-area projection keeps the size ratio precise.')}</p>
-                            </div>
-                            <div className="map-tools">
-                                <button
-                                    type="button"
-                                    className="fullscreen-toggle"
-                                    onClick={() => setIsFullscreen(true)}
-                                >
-                                    {t('Full screen')}
-                                </button>
-                                <div className="map-legend">
+                                <div className="map-legend-inline">
                                     <span className="legend-item primary">
                                         <span className="legend-dot" />
                                         {primary.label}
@@ -864,68 +826,73 @@ export const CountrySizeCompare = () => {
                                         {secondary.label}
                                     </span>
                                 </div>
-                                <div className="map-controls">
-                                    <label htmlFor="overlay-zoom">{t('Zoom')}</label>
-                                    <div className="map-zoom">
+                            </div>
+                            <div className="map-toolbar">
+                                <div className="toolbar-group">
+                                    <div className="map-zoom-compact">
                                         <button
                                             type="button"
-                                            className="zoom-button"
                                             onClick={() => handleZoomChange(zoom - ZOOM_STEP)}
                                             aria-label={t('Zoom out')}
                                             disabled={zoom <= MIN_ZOOM + 0.001}
                                         >
-                                            -
+                                            −
                                         </button>
                                         <input
-                                            id="overlay-zoom"
                                             type="range"
+                                            className="zoom-slider"
                                             min={MIN_ZOOM}
                                             max={MAX_ZOOM}
                                             step={ZOOM_STEP}
                                             value={zoom}
-                                            onChange={(event) => handleZoomChange(Number(event.target.value))}
-                                            aria-label={t('Zoom')}
+                                            onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
+                                            aria-label={t('Zoom level')}
                                         />
+                                        <span className="mono">{Math.round(zoom * 100)}%</span>
                                         <button
                                             type="button"
-                                            className="zoom-button"
                                             onClick={() => handleZoomChange(zoom + ZOOM_STEP)}
                                             aria-label={t('Zoom in')}
                                             disabled={zoom >= MAX_ZOOM - 0.001}
                                         >
                                             +
                                         </button>
-                                        <span className="map-zoom-readout mono">
-                                            {Math.round(zoom * 100)}%
-                                        </span>
                                     </div>
-                                </div>
-                                <div className="map-controls">
-                                    <label>{t('Move')}</label>
-                                    <div className="map-move-toggle" role="group" aria-label={t('Move')}>
+                                    <div className="map-move-compact" role="group">
                                         <button
                                             type="button"
-                                            className={`map-move-button${dragTarget === 'both' ? ' active' : ''}`}
+                                            className={dragTarget === 'both' ? 'active' : ''}
                                             onClick={() => setDragTarget('both')}
+                                            title={t('Pan view')}
                                         >
-                                            {t('Pan view')}
+                                            ⊞
                                         </button>
                                         <button
                                             type="button"
-                                            className={`map-move-button${dragTarget === 'primary' ? ' active' : ''}`}
+                                            className={dragTarget === 'primary' ? 'active primary-btn' : 'primary-btn'}
                                             onClick={() => setDragTarget('primary')}
+                                            title={primary.label}
                                         >
-                                            {t('Move {{country}}', { country: primary.label })}
+                                            A
                                         </button>
                                         <button
                                             type="button"
-                                            className={`map-move-button${dragTarget === 'secondary' ? ' active' : ''}`}
+                                            className={dragTarget === 'secondary' ? 'active secondary-btn' : 'secondary-btn'}
                                             onClick={() => setDragTarget('secondary')}
+                                            title={secondary.label}
                                         >
-                                            {t('Move {{country}}', { country: secondary.label })}
+                                            B
                                         </button>
                                     </div>
                                 </div>
+                                <button
+                                    type="button"
+                                    className="expand-btn"
+                                    onClick={() => setIsFullscreen(true)}
+                                    aria-label={t('Full screen')}
+                                >
+                                    ⛶
+                                </button>
                             </div>
                         </div>
                         <div className={`map-stage${isDragging ? ' dragging' : ''}`}>

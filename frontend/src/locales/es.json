@@ -93,7 +93,6 @@
   "Do you use the internet?": "¿Usas Internet?",
   "Does your household own a car?": "",
   "Enter your annual income to estimate where you stand globally": "Ingresa tus ingresos anuales para estimar tu posición a nivel mundial",
-  "Equal-area projection keeps the size ratio precise.": "",
   "Example: 50,000": "Ejemplo: 50,000",
   "Exchange rate": "Tasa de cambio",
   "Exit full screen": "",
@@ -145,8 +144,6 @@
   "Market": "Mercado",
   "Market exchange rate (MER)": "Tasa de cambio de mercado (MER)",
   "Median (50th)": "Mediana (50º)",
-  "Move": "",
-  "Move {{country}}": "",
   "My income is in the Top {{score}} worldwide. Check yours:": "Mi ingreso está en el Top {{score}} mundial. Comprueba el tuyo:",
   "Nearly 1 billion people worldwide feel insecure about their housing tenure.": "Casi mil millones de personas en todo el mundo se sienten inseguras sobre la tenencia de su vivienda.",
   "Nearly 3.8 billion people lack any form of social protection coverage.": "Casi 3.8 mil millones de personas carecen de cualquier forma de cobertura de protección social.",
@@ -261,7 +258,7 @@
   "Your income": "Tus ingresos",
   "Your income vs median": "Tu ingreso vs mediana",
   "Your Rights": "Tus derechos",
-  "Zoom": "",
   "Zoom in": "",
+  "Zoom level": "Nivel de zoom",
   "Zoom out": ""
 }
