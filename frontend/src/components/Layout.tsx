@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import './Layout.css';
@@ -9,16 +10,133 @@ interface LayoutProps {
     showHome?: boolean;
     onBack?: () => void;
     onHome?: () => void;
+    currentApp?: string;
+    onSelectApp?: (appId: string) => void;
 }
 
-export const Layout = ({ children, showBack, showHome, onBack, onHome }: LayoutProps) => {
+const APP_LIST = [
+    { id: 'world-rank', labelKey: 'World Rank Quiz', icon: '🌍', desc: 'Test your global awareness' },
+    { id: 'income-rank', labelKey: 'Living Standard Rank', icon: '💰', desc: 'Compare your income globally' },
+    { id: 'country-compare', labelKey: 'Country Size Compare', icon: '🗺️', desc: 'Compare country sizes' },
+    { id: 'global-stats', labelKey: 'Global Statistics', icon: '📊', desc: 'Explore world statistics' },
+];
+
+export const Layout = ({ children, showBack, showHome, onBack, onHome, currentApp, onSelectApp }: LayoutProps) => {
     const { t } = useTranslation();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    // Lock body scroll when sidebar is open
+    useEffect(() => {
+        if (sidebarOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [sidebarOpen]);
+
+    // Close sidebar on escape key
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setSidebarOpen(false);
+        };
+        document.addEventListener('keydown', handleEscape);
+        return () => document.removeEventListener('keydown', handleEscape);
+    }, []);
+
+    const handleShare = async () => {
+        const shareData = {
+            title: t('Awesome Rank'),
+            text: t('Check out Awesome Rank!'),
+            url: window.location.href,
+        };
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if ((err as Error).name !== 'AbortError') {
+                    console.error('Share failed:', err);
+                }
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+            } catch (err) {
+                console.error('Copy failed:', err);
+            }
+        }
+    };
+
+    const handleAppSelect = (appId: string) => {
+        setSidebarOpen(false);
+        if (onSelectApp) {
+            onSelectApp(appId);
+        }
+    };
 
     return (
         <div className="layout">
+            {/* Sidebar */}
+            <AnimatePresence>
+                {sidebarOpen && (
+                    <>
+                        <motion.div
+                            className="sidebar-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={() => setSidebarOpen(false)}
+                        />
+                        <motion.aside
+                            className="sidebar"
+                            initial={{ x: '-100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '-100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                        >
+                            <div className="sidebar-header">
+                                <div className="sidebar-brand">
+                                    <span className="brand-icon">✦</span>
+                                    <span className="brand-text">Awesome Rank</span>
+                                </div>
+                                <button
+                                    className="sidebar-close"
+                                    onClick={() => setSidebarOpen(false)}
+                                    aria-label={t('Close menu')}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            <nav className="sidebar-nav">
+                                <div className="sidebar-section-title">{t('Apps')}</div>
+                                {APP_LIST.map((app) => (
+                                    <button
+                                        key={app.id}
+                                        className={`sidebar-item ${currentApp === app.id ? 'active' : ''}`}
+                                        onClick={() => handleAppSelect(app.id)}
+                                    >
+                                        <span className="sidebar-item-icon">{app.icon}</span>
+                                        <div className="sidebar-item-content">
+                                            <span className="sidebar-item-label">{t(app.labelKey)}</span>
+                                            <span className="sidebar-item-desc">{t(app.desc)}</span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </nav>
+                            <div className="sidebar-footer">
+                                <LanguageSwitcher />
+                            </div>
+                        </motion.aside>
+                    </>
+                )}
+            </AnimatePresence>
+
             <header className="layout-header">
                 <div className="header-left">
-                    {showBack && onBack && (
+                    {showBack && onBack ? (
                         <motion.button
                             className="header-btn"
                             onClick={onBack}
@@ -30,12 +148,53 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome }: LayoutP
                         >
                             ←
                         </motion.button>
+                    ) : onSelectApp ? (
+                        <motion.button
+                            className="header-btn header-btn-menu"
+                            onClick={() => setSidebarOpen(true)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            aria-label={t('Open menu')}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <line x1="3" y1="6" x2="21" y2="6" />
+                                <line x1="3" y1="12" x2="21" y2="12" />
+                                <line x1="3" y1="18" x2="21" y2="18" />
+                            </svg>
+                        </motion.button>
+                    ) : (
+                        <div className="header-brand">
+                            <span className="brand-icon">✦</span>
+                            <span className="brand-text">Awesome Rank</span>
+                        </div>
                     )}
                 </div>
                 <div className="header-center">
-                    <LanguageSwitcher />
+                    {currentApp && (
+                        <div className="header-current-app">
+                            <span className="current-app-icon">
+                                {APP_LIST.find(a => a.id === currentApp)?.icon}
+                            </span>
+                            <span className="current-app-name">
+                                {t(APP_LIST.find(a => a.id === currentApp)?.labelKey || '')}
+                            </span>
+                        </div>
+                    )}
                 </div>
                 <div className="header-right">
+                    <motion.button
+                        className="header-btn header-btn-share"
+                        onClick={handleShare}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        aria-label={t('Share')}
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                            <polyline points="16 6 12 2 8 6" />
+                            <line x1="12" y1="2" x2="12" y2="15" />
+                        </svg>
+                    </motion.button>
                     {showHome && onHome && (
                         <motion.button
                             className="header-btn"

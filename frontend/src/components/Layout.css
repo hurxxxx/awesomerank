@@ -24,13 +24,15 @@
 
 .header-left,
 .header-right {
-    flex: 0 0 56px;
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
+    gap: 0.5rem;
 }
 
 .header-left {
     justify-content: flex-start;
+    min-width: 0;
 }
 
 .header-right {
@@ -43,6 +45,218 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-sm);
+    min-width: 0;
+}
+
+/* Brand */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    padding: 0.35rem 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.header-brand:hover {
+    background: rgba(0, 240, 255, 0.08);
+}
+
+.brand-icon {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.brand-text {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 500;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85vw;
+    background: linear-gradient(180deg, rgba(12, 12, 18, 0.98) 0%, rgba(8, 8, 12, 0.99) 100%);
+    border-right: 1px solid var(--glass-border);
+    z-index: 501;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-brand .brand-icon {
+    font-size: 1.3rem;
+}
+
+.sidebar-brand .brand-text {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.sidebar-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sidebar-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.sidebar-section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.85rem 0.75rem;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    margin-bottom: 0.25rem;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sidebar-item:hover {
+    background: rgba(0, 240, 255, 0.06);
+}
+
+.sidebar-item.active {
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.sidebar-item.active .sidebar-item-label {
+    color: var(--primary-color);
+}
+
+.sidebar-item-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.sidebar-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.sidebar-item-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.sidebar-item-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+/* Header Current App Display */
+.header-current-app {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.1);
+}
+
+.current-app-icon {
+    font-size: 1rem;
+}
+
+.current-app-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+
+/* Header Menu Button */
+.header-btn-menu {
+    background: transparent;
+}
+
+/* Share button */
+.header-btn-share {
+    background: transparent;
+    border: 1px solid var(--glass-border);
 }
 
 .header-btn {
@@ -116,6 +330,21 @@
 }
 
 /* Responsive */
+@media (max-width: 480px) {
+    .brand-text {
+        display: none;
+    }
+
+    .current-app-name {
+        max-width: 100px;
+        font-size: 0.75rem;
+    }
+
+    .sidebar {
+        width: 260px;
+    }
+}
+
 @media (max-width: 375px) {
     .layout-header {
         padding: var(--space-xs) var(--space-sm);
@@ -124,13 +353,64 @@
 
     .header-left,
     .header-right {
-        flex: 0 0 48px;
+        flex: 0 0 auto;
     }
 
     .header-btn {
         width: 40px;
         height: 40px;
         font-size: 1.1rem;
+    }
+
+    .header-btn-share {
+        width: 36px;
+        height: 36px;
+    }
+
+    .header-btn-share svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .header-current-app {
+        padding: 0.25rem 0.4rem;
+    }
+
+    .current-app-icon {
+        font-size: 0.9rem;
+    }
+
+    .current-app-name {
+        display: none;
+    }
+
+    .sidebar {
+        width: 240px;
+    }
+
+    .sidebar-header {
+        padding: 0.875rem 1rem;
+    }
+
+    .sidebar-nav {
+        padding: 0.75rem;
+    }
+
+    .sidebar-item {
+        padding: 0.75rem 0.65rem;
+        gap: 0.7rem;
+    }
+
+    .sidebar-item-icon {
+        font-size: 1.3rem;
+    }
+
+    .sidebar-item-label {
+        font-size: 0.85rem;
+    }
+
+    .sidebar-item-desc {
+        font-size: 0.7rem;
     }
 
     .layout-footer {
@@ -157,5 +437,22 @@
         height: 36px;
         font-size: 1rem;
         border-radius: 10px;
+    }
+
+    .header-current-app {
+        display: none;
+    }
+
+    .sidebar {
+        width: 220px;
+    }
+
+    .sidebar-close {
+        width: 32px;
+        height: 32px;
+    }
+
+    .sidebar-item-desc {
+        display: none;
     }
 }

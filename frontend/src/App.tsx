@@ -245,6 +245,17 @@ function AppContent() {
   const showBack = view !== 'home' && view !== 'admin';
   const showHome = view !== 'home' && view !== 'landing' && view !== 'income' && view !== 'global-stats' && view !== 'admin';
 
+  // Map view to app id
+  const currentApp = view === 'landing' || view === 'demographics' || view === 'quiz' || view === 'result'
+    ? 'world-rank'
+    : view === 'income'
+      ? 'income-rank'
+      : view === 'country-compare'
+        ? 'country-compare'
+        : view === 'global-stats'
+          ? 'global-stats'
+          : undefined;
+
   // Admin page has its own layout
   if (view === 'admin') {
     return <AdminDashboard />;
@@ -256,6 +267,8 @@ function AppContent() {
       showHome={showHome}
       onBack={goBack}
       onHome={goHome}
+      currentApp={currentApp}
+      onSelectApp={handleSelectApp}
     >
       <AnimatePresence mode="wait">
         {view === 'home' && <AppSelector onSelectApp={handleSelectApp} key="home" />}
