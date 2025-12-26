@@ -9,7 +9,7 @@ module.exports = {
         jsx: ['JsxLexer'],
         default: ['JavascriptLexer'],
     },
-    locales: ['en', 'ko', 'es'],
+    locales: ['en', 'ko', 'es', 'pt'],
     output: 'src/locales/$LOCALE.json',
     input: ['src/**/*.{ts,tsx}'],
     sort: (a, b) => a.localeCompare(b),

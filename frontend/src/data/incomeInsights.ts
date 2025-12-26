@@ -3,6 +3,8 @@
  * Sources: World Bank, WID.world, Poverty & Inequality Platform
  */
 
+import type { TFunction } from 'i18next';
+
 export interface IncomeClass {
   id: string;
   labelKey: string;  // i18n key
@@ -127,6 +129,40 @@ export const INCOME_MILESTONES = {
   top1: { percentile: 99, labelKey: 'Top 1%' },
   top01: { percentile: 99.9, labelKey: 'Top 0.1%' },
 } as const;
+
+// i18next-parser helper to include dynamic keys from this file.
+export const getIncomeInsightKeys = (t: TFunction): string[] => [
+  t('Extreme Poverty'),
+  t('Low Income'),
+  t('Lower Middle Class'),
+  t('Global Middle Class'),
+  t('Upper Middle Class'),
+  t('Affluent'),
+  t('Global Elite'),
+  t('Below $2.15/day poverty line'),
+  t('$2.15 - $6.85/day'),
+  t('Below global median'),
+  t('Around global median'),
+  t('Above most of the world'),
+  t('Top 10% globally'),
+  t('Top 1% globally'),
+  t('Extreme Poverty Line'),
+  t('Lower-Middle Income Poverty Line'),
+  t('Upper-Middle Income Poverty Line'),
+  t('International extreme poverty threshold'),
+  t('Poverty line for lower-middle-income countries'),
+  t('Poverty line for upper-middle-income countries'),
+  t('Global Consumer Class'),
+  t('Spending capacity beyond basic necessities'),
+  t('Bottom 20%'),
+  t('Global Median'),
+  t('Top Half'),
+  t('Top 20%'),
+  t('Top 10%'),
+  t('Top 5%'),
+  t('Top 1%'),
+  t('Top 0.1%'),
+];
 
 /**
  * Get income class based on percentile

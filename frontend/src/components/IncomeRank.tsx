@@ -283,21 +283,21 @@ export function IncomeRank() {
     return [
       {
         id: 'extreme',
-        labelKey: 'Extreme poverty line',
+        labelKey: POVERTY_LINES.extreme.labelKey,
         dailyUsd: POVERTY_LINES.extreme.dailyUsd,
         isAbove: povertyStatus.aboveExtremePoverty,
         highlight: false,
       },
       {
         id: 'upper',
-        labelKey: 'Upper-middle poverty line',
+        labelKey: POVERTY_LINES.upper.labelKey,
         dailyUsd: POVERTY_LINES.upper.dailyUsd,
         isAbove: povertyStatus.aboveUpperPoverty,
         highlight: false,
       },
       {
         id: 'consumer',
-        labelKey: 'Global consumer class',
+        labelKey: CONSUMER_CLASS.labelKey,
         dailyUsd: CONSUMER_CLASS.dailyUsd,
         isAbove: povertyStatus.isConsumerClass,
         highlight: true,

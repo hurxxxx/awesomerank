@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import './AdminDashboard.css';
 
 interface Response {
@@ -34,6 +35,7 @@ interface Summary {
 }
 
 export const AdminDashboard = () => {
+  const { t, i18n } = useTranslation();
   const [responses, setResponses] = useState<Response[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,7 +59,7 @@ export const AdminDashboard = () => {
       ]);
 
       if (!statsRes.ok || !summaryRes.ok) {
-        throw new Error('API 요청 실패');
+        throw new Error(t('API request failed'));
       }
 
       const statsData = await statsRes.json();
@@ -66,7 +68,7 @@ export const AdminDashboard = () => {
       setResponses(statsData.responses || []);
       setSummary(summaryData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '데이터 로딩 실패');
+      setError(err instanceof Error ? err.message : t('Failed to load data'));
     } finally {
       setLoading(false);
     }
@@ -74,7 +76,7 @@ export const AdminDashboard = () => {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleString('ko-KR', {
+    return date.toLocaleString(i18n.language, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -88,9 +90,9 @@ export const AdminDashboard = () => {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     if (minutes > 0) {
-      return `${minutes}분 ${seconds % 60}초`;
+      return t('{{minutes}} min {{seconds}} sec', { minutes, seconds: seconds % 60 });
     }
-    return `${seconds}초`;
+    return t('{{seconds}} sec', { seconds });
   };
 
   const parseAnswers = (answersStr: string): boolean[] => {
@@ -104,7 +106,7 @@ export const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="admin-dashboard">
-        <div className="admin-loading">데이터 로딩 중...</div>
+        <div className="admin-loading">{t('Loading data...')}</div>
       </div>
     );
   }
@@ -114,7 +116,7 @@ export const AdminDashboard = () => {
       <div className="admin-dashboard">
         <div className="admin-error">
           <p>{error}</p>
-          <button onClick={fetchData}>다시 시도</button>
+          <button onClick={fetchData}>{t('Retry')}</button>
         </div>
       </div>
     );
@@ -123,9 +125,9 @@ export const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
       <header className="admin-header">
-        <h1>관리자 대시보드</h1>
+        <h1>{t('Admin dashboard')}</h1>
         <button className="refresh-btn" onClick={fetchData}>
-          새로고침
+          {t('Refresh')}
         </button>
       </header>
 
@@ -134,79 +136,79 @@ export const AdminDashboard = () => {
           className={`tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
           onClick={() => setActiveTab('summary')}
         >
-          요약 통계
+          {t('Summary')}
         </button>
         <button
           className={`tab-btn ${activeTab === 'responses' ? 'active' : ''}`}
           onClick={() => setActiveTab('responses')}
         >
-          응답 목록 ({summary?.totalResponses || 0})
+          {t('Responses ({{count}})', { count: summary?.totalResponses || 0 })}
         </button>
       </div>
 
       {activeTab === 'summary' && summary && (
         <div className="admin-summary">
           <div className="summary-card total">
-            <h3>전체 응답</h3>
-            <p className="big-number">{summary.totalResponses.toLocaleString()}</p>
+            <h3>{t('Total responses')}</h3>
+            <p className="big-number">{summary.totalResponses.toLocaleString(i18n.language)}</p>
           </div>
 
           <div className="summary-grid">
             <div className="summary-card">
-              <h3>국가별</h3>
+              <h3>{t('By country')}</h3>
               <ul className="stat-list">
                 {summary.byCountry.slice(0, 10).map((item, idx) => (
                   <li key={idx}>
-                    <span className="stat-label">{item.country || '미확인'}</span>
-                    <span className="stat-value">{item.count}</span>
+                    <span className="stat-label">{item.country || t('Unknown')}</span>
+                    <span className="stat-value">{item.count.toLocaleString(i18n.language)}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div className="summary-card">
-              <h3>연령대별</h3>
+              <h3>{t('By age group')}</h3>
               <ul className="stat-list">
                 {summary.byAgeGroup.map((item, idx) => (
                   <li key={idx}>
-                    <span className="stat-label">{item.age_group || '미선택'}</span>
-                    <span className="stat-value">{item.count}</span>
+                    <span className="stat-label">{item.age_group || t('Not selected')}</span>
+                    <span className="stat-value">{item.count.toLocaleString(i18n.language)}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div className="summary-card">
-              <h3>성별</h3>
+              <h3>{t('By gender')}</h3>
               <ul className="stat-list">
                 {summary.byGender.map((item, idx) => (
                   <li key={idx}>
-                    <span className="stat-label">{item.gender || '미선택'}</span>
-                    <span className="stat-value">{item.count}</span>
+                    <span className="stat-label">{item.gender || t('Not selected')}</span>
+                    <span className="stat-value">{item.count.toLocaleString(i18n.language)}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div className="summary-card">
-              <h3>기기 유형</h3>
+              <h3>{t('By device')}</h3>
               <ul className="stat-list">
                 {summary.byDevice.map((item, idx) => (
                   <li key={idx}>
-                    <span className="stat-label">{item.device_type || '미확인'}</span>
-                    <span className="stat-value">{item.count}</span>
+                    <span className="stat-label">{item.device_type || t('Unknown')}</span>
+                    <span className="stat-value">{item.count.toLocaleString(i18n.language)}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
             <div className="summary-card">
-              <h3>언어별</h3>
+              <h3>{t('By language')}</h3>
               <ul className="stat-list">
                 {summary.byLanguage.slice(0, 10).map((item, idx) => (
                   <li key={idx}>
-                    <span className="stat-label">{item.selected_language || '미확인'}</span>
-                    <span className="stat-value">{item.count}</span>
+                    <span className="stat-label">{item.selected_language || t('Unknown')}</span>
+                    <span className="stat-value">{item.count.toLocaleString(i18n.language)}</span>
                   </li>
                 ))}
               </ul>
@@ -221,19 +223,19 @@ export const AdminDashboard = () => {
             <table className="responses-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>시간</th>
-                  <th>국가</th>
-                  <th>도시</th>
-                  <th>연령</th>
-                  <th>성별</th>
-                  <th>점수</th>
-                  <th>티어</th>
-                  <th>Yes</th>
-                  <th>언어</th>
-                  <th>기기</th>
-                  <th>소요시간</th>
-                  <th>완료</th>
+                  <th>{t('ID')}</th>
+                  <th>{t('Time')}</th>
+                  <th>{t('Country')}</th>
+                  <th>{t('City')}</th>
+                  <th>{t('Age')}</th>
+                  <th>{t('Gender')}</th>
+                  <th>{t('Score')}</th>
+                  <th>{t('Tier')}</th>
+                  <th>{t('YES')}</th>
+                  <th>{t('Language')}</th>
+                  <th>{t('Device')}</th>
+                  <th>{t('Session duration')}</th>
+                  <th>{t('Completed')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -256,35 +258,35 @@ export const AdminDashboard = () => {
                       <td>{response.selected_language || '-'}</td>
                       <td>{response.device_type || '-'}</td>
                       <td>{formatDuration(response.session_duration)}</td>
-                      <td>{response.completed ? 'O' : 'X'}</td>
+                      <td>{response.completed ? t('YES') : t('NO')}</td>
                     </tr>
                     {expandedRow === response.id && (
                       <tr className="detail-row">
                         <td colSpan={13}>
                           <div className="detail-content">
                             <div className="detail-section">
-                              <h4>응답 상세</h4>
+                              <h4>{t('Response details')}</h4>
                               <div className="answers-grid">
                                 {parseAnswers(response.answers).map((answer, idx) => (
                                   <span key={idx} className={`answer-badge ${answer ? 'yes' : 'no'}`}>
-                                    Q{idx + 1}: {answer ? 'Yes' : 'No'}
+                                    Q{idx + 1}: {answer ? t('YES') : t('NO')}
                                   </span>
                                 ))}
                               </div>
                             </div>
                             {(response.utm_source || response.utm_medium || response.utm_campaign) && (
                               <div className="detail-section">
-                                <h4>UTM 파라미터</h4>
+                                <h4>{t('UTM parameters')}</h4>
                                 <p>
-                                  {response.utm_source && <span>source: {response.utm_source} </span>}
-                                  {response.utm_medium && <span>medium: {response.utm_medium} </span>}
-                                  {response.utm_campaign && <span>campaign: {response.utm_campaign}</span>}
+                                  {response.utm_source && <span>{t('UTM source')}: {response.utm_source} </span>}
+                                  {response.utm_medium && <span>{t('UTM medium')}: {response.utm_medium} </span>}
+                                  {response.utm_campaign && <span>{t('UTM campaign')}: {response.utm_campaign}</span>}
                                 </p>
                               </div>
                             )}
                             <div className="detail-section">
-                              <h4>퀴즈 소요시간</h4>
-                              <p>총 {formatDuration(response.total_quiz_time)}</p>
+                              <h4>{t('Quiz duration')}</h4>
+                              <p>{t('Total {{duration}}', { duration: formatDuration(response.total_quiz_time) })}</p>
                             </div>
                           </div>
                         </td>
@@ -296,7 +298,7 @@ export const AdminDashboard = () => {
             </table>
           </div>
           {responses.length === 0 && (
-            <div className="no-data">아직 응답 데이터가 없습니다.</div>
+            <div className="no-data">{t('No response data yet.')}</div>
           )}
         </div>
       )}

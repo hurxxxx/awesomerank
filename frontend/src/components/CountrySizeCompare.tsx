@@ -55,13 +55,13 @@ const NAME_KEY_BY_LANGUAGE: Record<string, string> = {
     zh: 'NAME_ZH',
 };
 
-const getLocalizedName = (properties: CountryFeature['properties'], language: string) => {
+const getLocalizedName = (properties: CountryFeature['properties'], language: string, fallbackLabel: string) => {
     const baseLanguage = language.split('-')[0];
     const languageKey = NAME_KEY_BY_LANGUAGE[baseLanguage] ?? 'NAME_EN';
     const localized = properties[languageKey];
     if (typeof localized === 'string' && localized.trim().length > 0) return localized;
     const fallback = properties.NAME_EN ?? properties.NAME ?? properties.ADMIN ?? properties.NAME_LONG;
-    return typeof fallback === 'string' ? fallback : 'Unknown';
+    return typeof fallback === 'string' ? fallback : fallbackLabel;
 };
 
 const formatArea = (value: number, locale: string) =>
@@ -137,17 +137,18 @@ export const CountrySizeCompare = () => {
     }, [resolution]);
 
     const countries = useMemo(() => {
+        const unknownLabel = t('Unknown');
         return features
             .map((feature) => {
                 const areaSteradians = geoArea(feature);
                 const areaKm2 = areaSteradians * EARTH_RADIUS_KM * EARTH_RADIUS_KM;
-                const name = (feature.properties.NAME_EN as string) || (feature.properties.ADMIN as string) || 'Unknown';
+                const name = (feature.properties.NAME_EN as string) || (feature.properties.ADMIN as string) || unknownLabel;
                 const iso3 = String(feature.properties.ADM0_A3 || feature.properties.ISO_A3 || '');
                 const officialAreaKm2 = iso3 ? (officialAreaByIso3 as Record<string, number | undefined>)[iso3] ?? null : null;
                 return {
                     id: iso3 || name,
                     iso3,
-                    label: getLocalizedName(feature.properties, i18n.language),
+                    label: getLocalizedName(feature.properties, i18n.language, unknownLabel),
                     name,
                     areaKm2,
                     officialAreaKm2,
@@ -155,7 +156,7 @@ export const CountrySizeCompare = () => {
                 } satisfies CountryEntry;
             })
             .sort((a, b) => a.label.localeCompare(b.label));
-    }, [features, i18n.language]);
+    }, [features, i18n.language, t]);
 
     useEffect(() => {
         if (!countries.length) return;
