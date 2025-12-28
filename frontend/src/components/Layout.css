@@ -39,15 +39,6 @@
     justify-content: flex-end;
 }
 
-.header-center {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-sm);
-    min-width: 0;
-}
-
 /* Brand */
 .header-brand {
     display: flex;
@@ -245,31 +236,6 @@
     gap: 1rem;
 }
 
-/* Header Current App Display */
-.header-current-app {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.4rem 0.7rem;
-    border-radius: var(--radius-md);
-    background: var(--card-bg);
-    border: 1px solid var(--border-subtle);
-}
-
-.current-app-icon {
-    font-size: var(--text-base);
-}
-
-.current-app-name {
-    font-size: var(--text-sm);
-    font-weight: var(--font-weight-semibold);
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 140px;
-}
-
 /* Header Menu Button */
 .header-btn-menu {
     background: transparent;
@@ -403,14 +369,6 @@
         height: 16px;
     }
 
-    .header-current-app {
-        padding: 0.3rem 0.5rem;
-    }
-
-    .current-app-name {
-        display: none;
-    }
-
     .sidebar {
         width: 240px;
     }
@@ -448,10 +406,6 @@
         width: 36px;
         height: 36px;
         border-radius: var(--radius-sm);
-    }
-
-    .header-current-app {
-        display: none;
     }
 
     .sidebar {

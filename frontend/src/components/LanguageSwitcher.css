@@ -31,6 +31,24 @@
     font-weight: 500;
 }
 
+.lang-code {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* Compact mode for header */
+.lang-trigger-compact {
+    padding: 6px 10px;
+    min-height: 36px;
+    gap: 4px;
+}
+
+.lang-trigger-compact svg {
+    width: 16px;
+    height: 16px;
+}
+
 /* Modal Overlay */
 .lang-modal-overlay {
     position: fixed;
@@ -46,18 +64,20 @@
     position: fixed;
     inset: 0;
     display: flex;
-    align-items: center;
+    align-items: safe center;
     justify-content: center;
     z-index: 1001;
-    padding: 1rem;
+    padding: calc(env(safe-area-inset-top, 0px) + 1rem) 1rem calc(env(safe-area-inset-bottom, 0px) + 1rem);
     box-sizing: border-box;
     pointer-events: none;
+    overflow-y: auto;
 }
 
 /* Modal Container */
 .lang-modal {
     width: min(90vw, 400px);
-    max-height: 80vh;
+    max-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 2rem);
+    margin: auto;
     background: var(--surface-color);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-xl);

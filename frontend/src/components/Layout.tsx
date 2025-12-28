@@ -196,33 +196,8 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome, currentAp
                         </div>
                     )}
                 </div>
-                <div className="header-center">
-                    {currentApp === 'world-rank' && (
-                        <div className="header-current-app">
-                            <span className="current-app-icon">🌍</span>
-                            <span className="current-app-name">{t('World Rank')}</span>
-                        </div>
-                    )}
-                    {currentApp === 'income-rank' && (
-                        <div className="header-current-app">
-                            <span className="current-app-icon">💰</span>
-                            <span className="current-app-name">{t('Living Standard Rank')}</span>
-                        </div>
-                    )}
-                    {currentApp === 'country-compare' && (
-                        <div className="header-current-app">
-                            <span className="current-app-icon">🗺️</span>
-                            <span className="current-app-name">{t('Country Size Compare')}</span>
-                        </div>
-                    )}
-                    {currentApp === 'global-stats' && (
-                        <div className="header-current-app">
-                            <span className="current-app-icon">📊</span>
-                            <span className="current-app-name">{t('Global Statistics')}</span>
-                        </div>
-                    )}
-                </div>
                 <div className="header-right">
+                    <LanguageSwitcher compact />
                     <motion.button
                         className="header-btn header-btn-share"
                         onClick={handleShare}
