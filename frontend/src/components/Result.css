@@ -28,7 +28,7 @@
     padding: clamp(0.75rem, 3vw, 1rem) clamp(1.25rem, 5vw, 2rem);
     border: 2px solid currentColor;
     border-radius: 50px;
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--glass-bg);
     text-transform: uppercase;
     letter-spacing: clamp(1px, 0.5vw, 2px);
     margin-bottom: clamp(2rem, 6vw, 3rem);
@@ -52,7 +52,7 @@
     margin: clamp(0.5rem, 2vw, 1rem) 0;
     line-height: 1;
     letter-spacing: -2px;
-    background: linear-gradient(180deg, #fff, #aaa);
+    background: linear-gradient(180deg, var(--text-primary), var(--text-muted));
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -100,7 +100,7 @@
     color: var(--text-primary);
     border: 1px solid var(--glass-border);
     border-radius: 100px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg-light);
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.2s ease;
@@ -111,8 +111,8 @@
 }
 
 .btn-restart:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--glass-bg);
+    border-color: var(--border);
 }
 
 @media (max-width: 480px) {
@@ -183,10 +183,10 @@
     min-height: var(--touch-target-min);
     font-size: clamp(0.875rem, 3vw, 1rem);
     font-weight: 600;
-    color: #000;
+    color: var(--bg-color);
     border: none;
     border-radius: 100px;
-    background: #fff;
+    background: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.2s ease;
@@ -195,12 +195,12 @@
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-share:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-lg);
 }
 
 .btn-details {
@@ -233,7 +233,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: var(--sidebar-overlay-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 1000;
@@ -288,7 +288,7 @@
 }
 
 .details-close:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--glass-bg-light);
     color: var(--primary-color);
 }
 
@@ -341,9 +341,9 @@
 }
 
 .detail-answer.no {
-    background: rgba(255, 100, 100, 0.15);
-    color: #ff6464;
-    border: 1px solid rgba(255, 100, 100, 0.3);
+    background: var(--decor-accent);
+    color: var(--error-color);
+    border: 1px solid var(--accent-color);
 }
 
 .detail-question-text {
@@ -361,7 +361,7 @@
 }
 
 .detail-stats {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--glass-bg);
     border-radius: 8px;
     padding: var(--space-sm);
     margin-top: var(--space-sm);

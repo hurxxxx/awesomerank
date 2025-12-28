@@ -12,13 +12,13 @@
 }
 
 .consent-banner {
-  background: linear-gradient(145deg, rgba(30, 30, 50, 0.98), rgba(20, 20, 35, 0.98));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-color);
+  border: 1px solid var(--glass-border);
   border-radius: 16px;
   padding: var(--space-lg);
   max-width: 500px;
   width: 100%;
-  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .consent-content {
@@ -28,7 +28,7 @@
 .consent-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0 0 var(--space-md) 0;
   display: flex;
   align-items: center;
@@ -43,7 +43,7 @@
 .consent-text {
   font-size: 0.9rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   margin: 0 0 var(--space-md) 0;
 }
 
@@ -51,7 +51,7 @@
   margin: 0 0 var(--space-md) 0;
   padding-left: var(--space-lg);
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   line-height: 1.8;
 }
 
@@ -61,14 +61,14 @@
 
 .consent-note {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-muted);
   margin: 0 0 var(--space-sm) 0;
   font-style: italic;
 }
 
 .consent-link {
   font-size: 0.85rem;
-  color: #00f3ff;
+  color: var(--primary-color);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -77,7 +77,7 @@
 }
 
 .consent-link:hover {
-  color: #4df8ff;
+  color: var(--primary-light);
   text-decoration: underline;
 }
 
@@ -108,12 +108,12 @@
 }
 
 .consent-btn-accept {
-  background: linear-gradient(135deg, #00f3ff, #0080ff);
-  color: #000;
+  background: var(--primary-color);
+  color: var(--bg-color);
 }
 
 .consent-btn-accept:hover {
-  background: linear-gradient(135deg, #4df8ff, #3399ff);
+  background: var(--primary-light);
   transform: translateY(-1px);
 }
 
@@ -123,17 +123,17 @@
 
 .consent-btn-reject {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
 }
 
 .consent-btn-reject:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: var(--glass-bg-light);
+  border-color: var(--glass-border);
 }
 
 .consent-btn-reject:active {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg);
 }
 
 /* Mobile responsiveness */

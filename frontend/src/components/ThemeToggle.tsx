@@ -4,49 +4,30 @@ import './ThemeToggle.css';
 
 type Theme = 'light' | 'dark' | 'system';
 
+// Initialize theme on app load (runs once, outside component)
+const getInitialTheme = (): Theme => {
+    const saved = localStorage.getItem('theme') as Theme | null;
+    if (saved) return saved;
+    // Default to dark if nothing saved
+    localStorage.setItem('theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    return 'dark';
+};
+
 export const ThemeToggle = () => {
-    const [theme, setTheme] = useState<Theme>(() => {
-        const saved = localStorage.getItem('theme') as Theme | null;
-        return saved || 'system';
-    });
+    const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
     useEffect(() => {
         const root = document.documentElement;
-
-        if (theme === 'system') {
-            root.removeAttribute('data-theme');
-            localStorage.removeItem('theme');
-        } else {
-            root.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-        }
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
     }, [theme]);
 
-    // Initialize on mount
-    useEffect(() => {
-        const saved = localStorage.getItem('theme') as Theme | null;
-        if (saved && saved !== 'system') {
-            document.documentElement.setAttribute('data-theme', saved);
-        }
-    }, []);
-
     const toggleTheme = () => {
-        setTheme(current => {
-            if (current === 'system') {
-                // Check current system preference
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                return prefersDark ? 'light' : 'dark';
-            }
-            if (current === 'dark') return 'light';
-            return 'dark';
-        });
+        setTheme(current => current === 'dark' ? 'light' : 'dark');
     };
 
     const getCurrentIcon = () => {
-        if (theme === 'system') {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            return prefersDark ? 'moon' : 'sun';
-        }
         return theme === 'dark' ? 'moon' : 'sun';
     };
 

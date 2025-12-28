@@ -111,7 +111,7 @@
     font-weight: 700;
     border-radius: var(--radius-md);
     border: 1px solid var(--glass-border);
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--glass-bg-light);
     color: var(--text-primary);
     display: flex;
     justify-content: space-between;
@@ -132,12 +132,12 @@
 }
 
 .btn-option.no {
-    border-color: rgba(255, 100, 100, 0.3);
+    border-color: var(--accent-color);
 }
 
 .btn-option.no.selected {
-    background: rgba(255, 100, 100, 0.15);
-    border-color: rgba(255, 100, 100, 0.6);
+    background: var(--decor-accent);
+    border-color: var(--error-color);
 }
 
 .key-hint {
@@ -202,8 +202,8 @@
     }
 
     .btn-option.no:hover {
-        background: rgba(255, 100, 100, 0.15);
-        border-color: rgba(255, 100, 100, 0.6);
+        background: var(--decor-accent);
+        border-color: var(--error-color);
     }
 }
 
