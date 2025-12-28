@@ -26,7 +26,7 @@
 }
 
 .consent-title {
-  font-size: 1.25rem;
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--text-primary);
   margin: 0 0 var(--space-md) 0;
@@ -37,11 +37,11 @@
 
 .consent-title::before {
   content: '🔒';
-  font-size: 1.1rem;
+  font-size: var(--text-lg);
 }
 
 .consent-text {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--text-secondary);
   margin: 0 0 var(--space-md) 0;
@@ -50,7 +50,7 @@
 .consent-data-list {
   margin: 0 0 var(--space-md) 0;
   padding-left: var(--space-lg);
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--text-secondary);
   line-height: 1.8;
 }
@@ -60,14 +60,14 @@
 }
 
 .consent-note {
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--text-muted);
   margin: 0 0 var(--space-sm) 0;
   font-style: italic;
 }
 
 .consent-link {
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   color: var(--primary-color);
   text-decoration: none;
   display: inline-flex;
@@ -83,7 +83,7 @@
 
 .consent-link::after {
   content: '↗';
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
 }
 
 .consent-actions {
@@ -98,7 +98,7 @@
   min-height: var(--touch-target-min, 44px);
   padding: var(--space-sm) var(--space-md);
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -146,16 +146,7 @@
     max-width: none;
   }
 
-  .consent-title {
-    font-size: 1.1rem;
-  }
-
-  .consent-text {
-    font-size: 0.85rem;
-  }
-
   .consent-data-list {
-    font-size: 0.8rem;
     padding-left: var(--space-md);
   }
 
@@ -171,14 +162,5 @@
 @media (max-width: 320px) {
   .consent-banner {
     padding: var(--space-sm);
-  }
-
-  .consent-title {
-    font-size: 1rem;
-  }
-
-  .consent-text,
-  .consent-data-list {
-    font-size: 0.75rem;
   }
 }

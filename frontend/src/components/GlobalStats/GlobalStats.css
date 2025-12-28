@@ -290,7 +290,7 @@
 }
 
 .card-icon {
-  font-size: 2.25rem;
+  font-size: var(--text-4xl);
   line-height: 1;
   flex-shrink: 0;
   position: relative;
@@ -306,7 +306,7 @@
 }
 
 .card-label {
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.18em;
@@ -363,7 +363,7 @@
   display: inline-block;
   padding: 0.3rem 0.8rem;
   border-radius: var(--radius-full);
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -527,7 +527,4 @@
     gap: 0.75rem;
   }
 
-  .card-icon {
-    font-size: 2rem;
-  }
 }

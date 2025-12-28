@@ -9,7 +9,7 @@
 }
 
 .chart-title {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-primary);
   text-align: center;
@@ -32,7 +32,7 @@
   position: absolute;
   bottom: -8px;
   transform: translateX(-50%);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--accent-color);
   white-space: nowrap;
@@ -49,7 +49,7 @@
 .chart-bar-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: var(--text-xs);
   color: var(--text-secondary);
   margin-bottom: 8px;
   text-transform: uppercase;
@@ -134,7 +134,7 @@
 }
 
 .threshold-label {
-  font-size: 10px;
+  font-size: var(--text-xs);
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.3px;
@@ -142,7 +142,7 @@
 }
 
 .threshold-value {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-primary);
   font-family: 'IBM Plex Mono', monospace;
@@ -156,7 +156,7 @@
 }
 
 .daily-label {
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--text-secondary);
   margin-bottom: 8px;
 }
@@ -206,13 +206,13 @@
   bottom: calc(100% + 4px);
   left: 50%;
   transform: translateX(-50%);
-  font-size: 9px;
+  font-size: calc(var(--text-xs) * 0.9);
   color: var(--text-muted);
   white-space: nowrap;
 }
 
 .daily-value {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--success-color);
   font-family: 'IBM Plex Mono', monospace;
@@ -250,7 +250,6 @@
   }
 
   .chart-title {
-    font-size: 12px;
     margin-bottom: 16px;
   }
 
@@ -262,32 +261,12 @@
     margin-bottom: 20px;
   }
 
-  .chart-bar-labels {
-    font-size: 9px;
-  }
-
   .chart-threshold {
     padding: 8px 10px;
   }
 
-  .threshold-label {
-    font-size: 9px;
-  }
-
-  .threshold-value {
-    font-size: 12px;
-  }
-
   .chart-daily {
     padding-top: 12px;
-  }
-
-  .daily-label {
-    font-size: 10px;
-  }
-
-  .daily-value {
-    font-size: 12px;
   }
 
   .chart-bar-you {
@@ -304,7 +283,6 @@
   }
 
   .chart-title {
-    font-size: 11px;
     margin-bottom: 12px;
   }
 
@@ -312,15 +290,7 @@
     height: 10px;
   }
 
-  .threshold-value {
-    font-size: 11px;
-  }
-
   .daily-bar-container {
     gap: 8px;
-  }
-
-  .daily-value {
-    font-size: 11px;
   }
 }

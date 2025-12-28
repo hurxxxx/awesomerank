@@ -33,9 +33,9 @@
 }
 
 .privacy-header h1 {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
 }
 
@@ -44,9 +44,9 @@
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1.2rem;
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: var(--text-xl);
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -63,14 +63,14 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--space-lg);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-size: var(--text-base);
   line-height: 1.7;
 }
 
 .privacy-updated {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
   margin-bottom: var(--space-lg);
 }
 
@@ -79,9 +79,9 @@
 }
 
 .privacy-content h2 {
-  font-size: 1.15rem;
+  font-size: var(--text-lg);
   font-weight: 600;
-  color: #00f3ff;
+  color: var(--primary-color);
   margin: 0 0 var(--space-md) 0;
 }
 
@@ -114,9 +114,9 @@
   padding: var(--space-sm) var(--space-xl);
   border-radius: 8px;
   border: none;
-  background: linear-gradient(135deg, #00f3ff, #0080ff);
-  color: #000;
-  font-size: 0.95rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  color: var(--bg-color);
+  font-size: var(--text-base);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -161,27 +161,13 @@
     padding: var(--space-md);
   }
 
-  .privacy-header h1 {
-    font-size: 1.25rem;
-  }
-
   .privacy-content {
     padding: var(--space-md);
-    font-size: 0.9rem;
-  }
-
-  .privacy-content h2 {
-    font-size: 1.05rem;
   }
 }
 
 @media (max-width: 320px) {
   .privacy-content {
-    font-size: 0.85rem;
     padding: var(--space-sm);
-  }
-
-  .privacy-content h2 {
-    font-size: 1rem;
   }
 }

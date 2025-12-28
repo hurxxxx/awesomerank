@@ -176,7 +176,7 @@
     position: relative;
     z-index: 1;
     color: var(--text-muted);
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
     transition: all var(--transition-fast);
     opacity: 0;
     transform: translateX(-8px);
@@ -192,7 +192,7 @@
     position: absolute;
     top: var(--space-sm);
     right: var(--space-sm);
-    font-size: 0.6rem;
+    font-size: var(--text-xs);
     font-weight: var(--font-weight-semibold);
     padding: 3px 8px;
     background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent-color) 100%);
@@ -233,9 +233,6 @@
         border-radius: var(--radius-lg);
     }
 
-    .app-card-icon {
-        font-size: 2rem;
-    }
 }
 
 /* Responsive: Small phones */
@@ -255,15 +252,6 @@
     .app-card {
         padding: var(--space-sm) var(--space-md);
         gap: var(--space-sm);
-    }
-
-    .app-card-icon {
-        font-size: 1.75rem;
-    }
-
-    .app-card-badge {
-        font-size: 0.5rem;
-        padding: 2px 5px;
     }
 
     .app-card-arrow {
