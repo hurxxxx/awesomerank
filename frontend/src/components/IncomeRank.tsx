@@ -12,6 +12,7 @@ import { useConsent } from '../contexts/useConsent';
 import { IncomeChart } from './IncomeChart';
 import { InfoTooltip } from './InfoTooltip';
 import { MatomoEvents } from '../utils/matomo';
+import { buildLocalizedPath } from '../utils/localePath';
 import './IncomeRank.css';
 
 // World population constant (2024 estimate)
@@ -756,9 +757,10 @@ export function IncomeRank() {
 
   const handleShare = async () => {
     // Build share URL with parameters
-    const baseUrl = `${window.location.origin}/income-rank`;
+    const language = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0].toLowerCase();
+    const basePath = buildLocalizedPath('/income-rank', language);
+    const baseUrl = `${window.location.origin}${basePath}`;
     const params = new URLSearchParams();
-    params.set('lang', i18n.language);
     if (parsedLocalIncome !== null) params.set('householdIncome', String(parsedLocalIncome));
     if (parsedAdults !== null) params.set('adults', String(parsedAdults));
     if (parsedChildren !== null) params.set('children', String(parsedChildren));

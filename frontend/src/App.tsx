@@ -20,9 +20,22 @@ import { AnimatePresence } from 'framer-motion';
 import { calculateScore, SCORE_ALGO_VERSION } from './utils/scoreCalculator';
 import { QUESTION_IDS, QUESTION_SET_ID } from './data/questions';
 import { trackPageView, MatomoEvents, PageTitles } from './utils/matomo';
+import {
+  SUPPORTED_LANGUAGE_CODES,
+  buildLocalizedPath,
+  isSupportedLanguageCode,
+  splitLocalizedPath,
+} from './utils/localePath';
 
 const APP_ID = 'world-rank';
 const QUIZ_VERSION = 'v1';
+const SITE_URL = String(import.meta.env.VITE_SITE_URL || 'https://awesomerank.com').replace(/\/+$/, '');
+const OG_LOCALE_BY_LANGUAGE: Record<string, string> = {
+  en: 'en_US',
+  ko: 'ko_KR',
+  es: 'es_ES',
+  pt: 'pt_BR',
+};
 
 function randomId() {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
@@ -108,11 +121,6 @@ type View =
   | 'global-stats'
   | 'privacy';
 
-function normalizePath(pathname: string) {
-  if (pathname.length > 1 && pathname.endsWith('/')) return pathname.slice(0, -1);
-  return pathname;
-}
-
 // Get initial view and shared data from URL parameters
 function getUrlState() {
   const params = new URLSearchParams(window.location.search);
@@ -123,7 +131,7 @@ function getUrlState() {
 
   let view: View = 'home';
 
-  const path = normalizePath(window.location.pathname);
+  const { path } = splitLocalizedPath(window.location.pathname);
   if (path === '/admin') {
     view = 'admin';
   } else if (path === '/privacy') {
@@ -165,15 +173,13 @@ function AppContent() {
   const startTimeRef = useRef<number>(0);
   const attributionRef = useRef(getAttributionData());
 
-  const getLangParam = () => {
-    const urlLang = new URLSearchParams(window.location.search).get('lang');
-    if (urlLang) return urlLang;
-    return i18n.language !== 'en' ? i18n.language : null;
+  const getActiveLanguage = () => {
+    const candidate = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0].toLowerCase();
+    return isSupportedLanguageCode(candidate) ? candidate : 'en';
   };
 
   const withLang = (path: string) => {
-    const lang = getLangParam();
-    return lang ? `${path}?lang=${lang}` : path;
+    return buildLocalizedPath(path, getActiveLanguage());
   };
 
   // Track session start
@@ -182,8 +188,104 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
+    const { lang, path } = splitLocalizedPath(window.location.pathname);
+    const targetLang = lang || getActiveLanguage();
+    const localizedPath = buildLocalizedPath(path, targetLang);
+    const nextUrl = `${localizedPath}${window.location.search}${window.location.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState({}, '', nextUrl);
+    }
+    if (lang !== targetLang && i18n.language !== targetLang) {
+      void i18n.changeLanguage(targetLang);
+    }
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = i18n.language || 'en';
   }, [i18n.language]);
+
+  useEffect(() => {
+    const upsertLink = (selector: string, attrs: Record<string, string>) => {
+      let el = document.head.querySelector(selector) as HTMLLinkElement | null;
+      if (!el) {
+        el = document.createElement('link');
+        document.head.appendChild(el);
+      }
+      for (const [key, value] of Object.entries(attrs)) {
+        el.setAttribute(key, value);
+      }
+    };
+
+    const upsertMeta = (selector: string, attrs: Record<string, string>) => {
+      let el = document.head.querySelector(selector) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement('meta');
+        document.head.appendChild(el);
+      }
+      for (const [key, value] of Object.entries(attrs)) {
+        el.setAttribute(key, value);
+      }
+    };
+
+    const { lang: pathLang, path: routePath } = splitLocalizedPath(window.location.pathname);
+    const effectiveLang = pathLang || getActiveLanguage();
+    const ogLang = routePath === '/admin' ? 'en' : effectiveLang;
+    const ogLocale = OG_LOCALE_BY_LANGUAGE[ogLang] || OG_LOCALE_BY_LANGUAGE.en;
+    const canonicalPath = routePath === '/admin'
+      ? '/admin'
+      : buildLocalizedPath(routePath, effectiveLang);
+    const canonicalUrl = `${SITE_URL}${canonicalPath}`;
+
+    upsertLink('link[rel="canonical"]', {
+      rel: 'canonical',
+      href: canonicalUrl,
+    });
+    upsertMeta('meta[property="og:url"]', {
+      property: 'og:url',
+      content: canonicalUrl,
+    });
+    upsertMeta('meta[name="twitter:url"]', {
+      name: 'twitter:url',
+      content: canonicalUrl,
+    });
+    upsertMeta('meta[property="og:locale"]', {
+      property: 'og:locale',
+      content: ogLocale,
+    });
+
+    const existingOgAlternates = document.head.querySelectorAll('meta[property="og:locale:alternate"]');
+    existingOgAlternates.forEach((node) => node.remove());
+    for (const code of SUPPORTED_LANGUAGE_CODES) {
+      if (code === ogLang) continue;
+      const alternate = OG_LOCALE_BY_LANGUAGE[code];
+      if (!alternate) continue;
+      const tag = document.createElement('meta');
+      tag.setAttribute('property', 'og:locale:alternate');
+      tag.setAttribute('content', alternate);
+      document.head.appendChild(tag);
+    }
+
+    const existingAlternates = document.head.querySelectorAll('link[rel="alternate"][hreflang]');
+    if (routePath === '/admin') {
+      existingAlternates.forEach((node) => node.remove());
+      return;
+    }
+
+    for (const code of SUPPORTED_LANGUAGE_CODES) {
+      const href = `${SITE_URL}${buildLocalizedPath(routePath, code)}`;
+      upsertLink(`link[rel="alternate"][hreflang="${code}"]`, {
+        rel: 'alternate',
+        hreflang: code,
+        href,
+      });
+    }
+    upsertLink('link[rel="alternate"][hreflang="x-default"]', {
+      rel: 'alternate',
+      hreflang: 'x-default',
+      href: `${SITE_URL}${buildLocalizedPath(routePath, 'en')}`,
+    });
+  }, [i18n.language, i18n.resolvedLanguage, view]);
 
   const navigate = (nextView: View, path?: string) => {
     if (path) {
@@ -313,10 +415,17 @@ function AppContent() {
       const state = getUrlState();
       setView(state.view);
       setSharedScore(state.sharedScore);
+      const { lang, path } = splitLocalizedPath(window.location.pathname);
+      if (path !== '/admin') {
+        const targetLang = lang || 'en';
+        if (i18n.language !== targetLang) {
+          void i18n.changeLanguage(targetLang);
+        }
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [i18n]);
 
   // Map view to app id
   const currentApp = view === 'landing' || view === 'demographics' || view === 'quiz' || view === 'result'

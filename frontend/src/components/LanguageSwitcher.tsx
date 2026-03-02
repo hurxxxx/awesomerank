@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { languages } from '../i18n';
+import { buildLocalizedPath, splitLocalizedPath } from '../utils/localePath';
 import './LanguageSwitcher.css';
 
 interface LanguageSwitcherProps {
@@ -37,6 +38,13 @@ export const LanguageSwitcher = ({ compact = false }: LanguageSwitcherProps) => 
     }, []);
 
     const handleLanguageChange = (code: string) => {
+        const { path } = splitLocalizedPath(window.location.pathname);
+        const localizedPath = buildLocalizedPath(path, code);
+        const nextUrl = `${localizedPath}${window.location.search}${window.location.hash}`;
+        const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        if (nextUrl !== currentUrl) {
+            window.history.replaceState({}, '', nextUrl);
+        }
         i18n.changeLanguage(code);
         setIsOpen(false);
     };

@@ -33,7 +33,8 @@ i18n
             escapeValue: false,
         },
         detection: {
-            order: ['querystring', 'navigator', 'htmlTag', 'path', 'subdomain'],
+            order: ['path', 'querystring', 'navigator', 'htmlTag', 'subdomain'],
+            lookupFromPathIndex: 0,
             lookupQuerystring: 'lang',
         },
     });

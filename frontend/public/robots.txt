@@ -3,29 +3,7 @@
 
 User-agent: *
 Allow: /
-
-# Sitemap location
-Sitemap: https://awesomerank.com/sitemap.xml
-
-# Disallow API endpoints
 Disallow: /api/
 Disallow: /admin
 
-# Allow all major search engine crawlers
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Slurp
-Allow: /
-
-User-agent: DuckDuckBot
-Allow: /
-
-User-agent: Baiduspider
-Allow: /
-
-User-agent: Yandex
-Allow: /
+Sitemap: https://awesomerank.com/sitemap.xml

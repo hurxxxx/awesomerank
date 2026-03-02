@@ -21,23 +21,6 @@ app.use(express.json());
 const FRONTEND_DIST = join(__dirname, '..', 'frontend', 'dist');
 const MIGRATIONS_DIR = join(__dirname, 'db', 'migrations');
 
-// Redirect legacy query-based URLs to path-based routes
-app.get('*', (req, res, next) => {
-  const appParam = typeof req.query.app === 'string' ? req.query.app : null;
-  const targetPath = appParam ? mapAppToPath(appParam) : null;
-  if (!targetPath) return next();
-  const currentPath = normalizePath(req.path.toLowerCase());
-  if (currentPath === targetPath) return next();
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(req.query)) {
-    if (key === 'app') continue;
-    if (typeof value === 'string') params.set(key, value);
-  }
-  const query = params.toString();
-  const location = query ? `${targetPath}?${query}` : targetPath;
-  res.redirect(301, location);
-});
-
 app.use(express.static(FRONTEND_DIST, { index: false }));
 
 const SITE_URL = process.env.SITE_URL || 'https://awesomerank.com';
@@ -47,6 +30,37 @@ const SUPPORTED_LANGUAGES = [
   { code: 'es', label: 'Spanish', ogLocale: 'es_ES' },
   { code: 'pt', label: 'Portuguese', ogLocale: 'pt_BR' },
 ];
+const DEFAULT_LANGUAGE = 'en';
+const SUPPORTED_LANGUAGE_CODES = new Set(SUPPORTED_LANGUAGES.map((lang) => lang.code));
+const TRACKING_QUERY_PARAMS = new Set([
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_content',
+  'utm_term',
+  'gclid',
+  'fbclid',
+  'msclkid',
+  'ttclid',
+  'mc_cid',
+  'mc_eid',
+]);
+
+function buildCanonicalParams(query) {
+  const params = new URLSearchParams();
+  let removedTracking = false;
+
+  for (const [key, value] of Object.entries(query || {})) {
+    if (key === 'app' || key === 'lang') continue;
+    if (TRACKING_QUERY_PARAMS.has(key.toLowerCase())) {
+      removedTracking = true;
+      continue;
+    }
+    if (typeof value === 'string') params.set(key, value);
+  }
+
+  return { params, removedTracking };
+}
 
 function normalizePath(pathname) {
   if (pathname.length > 1 && pathname.endsWith('/')) {
@@ -61,6 +75,75 @@ function mapAppToPath(appId) {
   if (appId === 'country-compare') return '/country-compare';
   if (appId === 'global-stats') return '/global-stats';
   return null;
+}
+
+function isSupportedLanguageCode(value) {
+  return typeof value === 'string' && SUPPORTED_LANGUAGE_CODES.has(value.toLowerCase());
+}
+
+function splitLocalizedPath(pathname) {
+  const normalized = normalizePath(pathname.toLowerCase());
+  const segments = normalized.split('/').filter(Boolean);
+  if (segments.length === 0) {
+    return { lang: null, routePath: '/' };
+  }
+  const [first, ...rest] = segments;
+  if (!isSupportedLanguageCode(first)) {
+    return { lang: null, routePath: normalized || '/' };
+  }
+  const routePath = rest.length === 0 ? '/' : `/${rest.join('/')}`;
+  return { lang: first, routePath: normalizePath(routePath) };
+}
+
+function buildLocalizedPath(routePath, lang) {
+  if (routePath === '/admin') return '/admin';
+  const normalized = normalizePath(routePath);
+  const safeLang = isSupportedLanguageCode(lang) ? lang.toLowerCase() : DEFAULT_LANGUAGE;
+  return normalized === '/' ? `/${safeLang}` : `/${safeLang}${normalized}`;
+}
+
+function isBypassPath(pathname) {
+  if (pathname === '/api' || pathname.startsWith('/api/')) return true;
+  if (pathname.startsWith('/assets/')) return true;
+  if (pathname === '/favicon.ico' || pathname === '/robots.txt' || pathname === '/sitemap.xml') return true;
+  return /\.[a-z0-9]+$/i.test(pathname);
+}
+
+function routeFeatureFallback(routeKey) {
+  if (routeKey === '/world-rank') {
+    return [
+      '15-question lifestyle quiz',
+      'Instant global percentile estimate',
+      'Private on-device scoring',
+    ];
+  }
+  if (routeKey === '/income-rank') {
+    return [
+      'Global income percentile calculator',
+      'PPP and market exchange rate modes',
+      'Household-size adjusted comparisons',
+    ];
+  }
+  if (routeKey === '/country-compare') {
+    return [
+      'Equal-area true size map',
+      'Drag-to-compare country overlays',
+      'Area rankings and visual comparisons',
+    ];
+  }
+  if (routeKey === '/global-stats') {
+    return [
+      'Height percentile by country',
+      'Age percentile among 8 billion people',
+      'Birthday rarity insights',
+    ];
+  }
+  return [
+    'True Size Map for country area comparison',
+    'Global income percentile calculator',
+    'World Rank lifestyle quiz',
+    'Global profile insights',
+  ];
 }
 
 const ROUTE_META = {
@@ -214,6 +297,477 @@ const ROUTE_META = {
   },
 };
 
+const LOCALIZED_META_OVERRIDES = {
+  ko: {
+    '/': {
+      title: 'Awesome Rank — 트루 사이즈 맵, 글로벌 소득 순위, 월드 퀴즈',
+      description: '국가의 실제 면적을 비교하고, 글로벌 소득 백분위를 계산하고, 80억 인구 중 나의 위치를 확인해보세요.',
+      heading: 'Awesome Rank — 80억 인구 중 당신의 위치는?',
+      subheading: '지리, 소득, 생활수준, 인구통계 데이터를 통해 세계 속 나의 위치를 보여주는 인터랙티브 도구.',
+      keywords: 'awesome rank, 트루 사이즈 맵, 국가 실제 크기, 세계 소득 백분위, 월드 랭크 퀴즈, 글로벌 순위, 생활수준 비교, 세계 통계',
+      highlights: [
+        '트루 사이즈 맵으로 국가의 실제 면적 비교',
+        'PPP/MER 기반 글로벌 소득 백분위 계산',
+        '15문항 월드 랭크 퀴즈',
+        '키·나이·생일 글로벌 프로필 분석',
+      ],
+      bodyParagraphs: [
+        'Awesome Rank는 전 세계와 나를 비교할 수 있는 무료 데이터 도구 모음입니다. 계산은 모두 브라우저에서 수행되며 개인정보를 서버로 전송하지 않습니다.',
+        '메르카토르 왜곡 없이 국가 면적을 비교하고, 세계 소득 분포에서 자신의 위치를 확인하며, 생활수준 퀴즈와 글로벌 통계 프로필을 통해 데이터 기반 인사이트를 얻을 수 있습니다.',
+      ],
+      faqs: [
+        { q: 'Awesome Rank는 어떤 서비스인가요?', a: '국가 면적 비교, 소득 백분위 계산, 생활수준 퀴즈, 글로벌 통계 비교를 제공하는 인터랙티브 데이터 서비스입니다.' },
+        { q: '개인정보는 안전한가요?', a: '네. 입력한 소득이나 응답 데이터는 브라우저 내부에서 계산되며 서버로 전송되지 않습니다.' },
+        { q: '데이터 출처는 무엇인가요?', a: 'WID.world, Natural Earth, CIA World Factbook, UN Population Division, NCD-RisC 등 공신력 있는 공개 데이터를 사용합니다.' },
+      ],
+    },
+    '/world-rank': {
+      title: '월드 랭크 퀴즈 — 80억 인구 중 나는 어디쯤? | Awesome Rank',
+      description: '15개 생활수준 질문으로 전 세계 백분위를 추정해보세요. 인프라, 연결성, 자산 수준을 기준으로 비교합니다.',
+      heading: '월드 랭크 퀴즈 — 전 세계 생활수준 백분위 추정',
+      subheading: '15개 질문으로 일상 생활수준을 전 세계 분포와 비교합니다.',
+      keywords: '월드 랭크 퀴즈, 세계 생활수준 테스트, 글로벌 백분위, 나는 세계에서 몇 퍼센트, 생활수준 비교, 글로벌 랭킹',
+      highlights: [
+        '인프라·연결성·자산 3개 영역 15문항',
+        '실측 통계 기반 베이지안 점수 모델',
+        '즉시 글로벌 백분위와 티어 결과 제공',
+        '결과 공유 링크 생성',
+      ],
+      bodyParagraphs: [
+        '월드 랭크 퀴즈는 전기, 위생, 인터넷, 가전 보유 등 일상 생활 환경을 묻는 15개 질문으로 구성됩니다.',
+        '응답은 전 세계 분포 통계에 기반해 계산되며, 결과는 글로벌 백분위와 함께 이해하기 쉬운 티어로 표시됩니다.',
+      ],
+      faqs: [
+        { q: '점수는 어떻게 계산되나요?', a: '각 질문은 전 세계 보급률/분포를 반영해 가중치가 부여되며, 답변 조합을 확률적으로 추정해 백분위를 계산합니다.' },
+        { q: '결과는 정확한가요?', a: '절대적인 개인 진단이 아니라 글로벌 통계에 기반한 추정치이며, 비교 지표로 활용하기 적합합니다.' },
+        { q: '응답 데이터는 어디로 전송되나요?', a: '결과 계산 자체는 브라우저에서 이루어지며, 동의 없는 개인정보 전송은 없습니다.' },
+      ],
+    },
+    '/income-rank': {
+      title: '나는 세계에서 얼마나 부자인가? — 글로벌 소득 백분위 계산기 | Awesome Rank',
+      description: '소득을 입력하고 80억 인구 중 위치를 확인하세요. WID.world 2024 데이터 기반, PPP/MER 비교 지원.',
+      heading: '나는 세계에서 얼마나 부자인가? — 글로벌 소득 백분위 계산기',
+      subheading: '최신 World Inequality Database 기반으로 전 세계 소득 분포에서의 위치를 확인하세요.',
+      keywords: '나는 얼마나 부자인가, 글로벌 소득 백분위, 소득 백분위 계산기, 세계 소득 비교, PPP 계산기, 생활수준 순위',
+      highlights: [
+        'WID.world 2024 기반 글로벌 분포',
+        'PPP(구매력) / MER(환율) 모드 지원',
+        '가구원 수 보정 계산',
+        '백분위·상위 n%·소득군 분류 제공',
+      ],
+      bodyParagraphs: [
+        '연간 소득과 가구 구성을 입력하면 전 세계 소득 분포에서 자신의 위치를 백분위로 확인할 수 있습니다.',
+        'PPP 모드는 국가별 물가 수준을 보정해 생활수준 비교에 적합하고, MER 모드는 시장 환율 기준의 명목 비교에 적합합니다.',
+      ],
+      faqs: [
+        { q: 'PPP와 MER의 차이는 무엇인가요?', a: 'PPP는 국가별 물가를 반영해 실질 구매력을 비교하고, MER는 시장 환율 기준으로 명목 금액을 비교합니다.' },
+        { q: '입력한 소득 정보는 저장되나요?', a: '계산은 브라우저에서 실행되며, 동의 없는 개인 식별 정보 전송은 없습니다.' },
+        { q: '어떤 데이터를 기반으로 하나요?', a: '세계 소득 분포는 WID.world 2024 자료를 기반으로 계산됩니다.' },
+      ],
+    },
+    '/country-compare': {
+      title: '트루 사이즈 맵 — 국가 실제 면적 비교 | Awesome Rank',
+      description: '등적 지도에서 국가를 드래그해 실제 면적을 비교하세요. 메르카토르 왜곡 없이 진짜 크기를 확인할 수 있습니다.',
+      heading: '트루 사이즈 맵 — 국가의 실제 크기를 확인하세요',
+      subheading: '메르카토르 왜곡이 없는 등적 지도 기반 인터랙티브 국가 면적 비교.',
+      keywords: '트루 사이즈 맵, 국가 실제 크기, 국가 면적 비교, 메르카토르 왜곡, 아프리카 실제 크기, 등적 지도',
+      highlights: [
+        'Equal Earth 기반 왜곡 최소화',
+        '국가·대륙·주/도 단위 비교 지원',
+        '드래그 오버레이로 직관적 면적 비교',
+        '면적 순위 테이블 실시간 제공',
+      ],
+      bodyParagraphs: [
+        '일반적인 메르카토르 지도는 고위도 지역 면적을 과장해 실제 크기 감각을 왜곡합니다.',
+        '트루 사이즈 맵은 등적 투영을 사용해 어느 위치에서도 면적 비율이 유지되도록 설계되어 정확한 비교가 가능합니다.',
+      ],
+      faqs: [
+        { q: '왜 일반 지도와 크기가 다르게 보이나요?', a: '메르카토르 투영은 항해용 각도 보존을 우선해 면적이 왜곡됩니다. 등적 지도에서는 실제 면적 비율이 유지됩니다.' },
+        { q: '아프리카는 실제로 얼마나 큰가요?', a: '아프리카는 약 3,037만 km²로 매우 넓으며, 메르카토르 지도에서 과소평가되는 대표적인 사례입니다.' },
+        { q: '국가 외 행정구역도 비교할 수 있나요?', a: '네. 주/도 단위 등 다양한 엔티티를 함께 선택해 비교할 수 있습니다.' },
+      ],
+    },
+    '/global-stats': {
+      title: '글로벌 프로필 — 키·나이·생일 세계 비교 | Awesome Rank',
+      description: '내 키, 나이, 생일이 세계 80억 인구에서 어느 위치인지 백분위로 확인하세요.',
+      heading: '글로벌 프로필 — 내 키·나이·생일, 세계와 비교',
+      subheading: '개인 통계를 입력하고 전 세계 인구 분포 내 백분위를 확인하세요.',
+      keywords: '키 백분위, 나이 백분위, 생일 희소성, 글로벌 인구 통계, 세계와 키 비교, 세계 통계 비교',
+      highlights: [
+        '국가/성별 기준 키 백분위',
+        '전 세계 인구 대비 나이 백분위',
+        '생일 희소성 및 빈도 비교',
+        'UN/NCD-RisC 데이터 기반 분석',
+      ],
+      bodyParagraphs: [
+        '글로벌 프로필은 키, 나이, 생일을 기준으로 전 세계 분포 내 위치를 직관적으로 보여줍니다.',
+        '국가와 성별을 반영한 통계 모델을 사용해 개인 수치를 백분위로 환산하고 비교 해석을 제공합니다.',
+      ],
+      faqs: [
+        { q: '키 백분위는 어떻게 계산되나요?', a: '국가·성별별 평균과 분산을 반영한 분포 모델을 통해 해당 키의 상대 위치를 계산합니다.' },
+        { q: '나이 비교는 어떤 기준을 쓰나요?', a: 'UN 인구 분포 데이터를 기반으로 전 세계 인구 중 더 어리거나 많은 인구 비율을 계산합니다.' },
+        { q: '생일 희소성은 무엇을 의미하나요?', a: '특정 월/일의 출생 빈도를 바탕으로 얼마나 흔하거나 드문 날짜인지 상대적으로 보여줍니다.' },
+      ],
+    },
+    '/privacy': {
+      title: '개인정보처리방침 — Awesome Rank',
+      description: 'Awesome Rank의 데이터 수집·이용·보호 정책을 확인하세요. 모든 계산은 브라우저에서 실행됩니다.',
+      heading: '개인정보처리방침',
+      subheading: '투명성, 개인정보 보호, 데이터 보안에 대한 약속.',
+      keywords: '개인정보처리방침, 데이터 보호, 브라우저 내 계산, awesome rank 개인정보',
+      highlights: [
+        '브라우저 내 계산 원칙',
+        '개인 데이터 서버 전송 최소화',
+        '명시적 동의 기반 데이터 수집',
+      ],
+      bodyParagraphs: [
+        'Awesome Rank는 개인정보 보호를 우선하며, 가능한 모든 계산을 클라이언트 환경에서 수행합니다.',
+        '수집이 필요한 항목은 목적과 보관 범위를 명확히 안내하고, 사용자 동의 정책을 준수합니다.',
+      ],
+      faqs: [
+        { q: '어떤 데이터가 수집되나요?', a: '서비스 개선을 위한 비식별 통계 정보가 중심이며, 민감한 개인 식별정보 수집은 최소화합니다.' },
+        { q: '데이터 수집을 거부할 수 있나요?', a: '네. 동의 배너 및 설정을 통해 비필수 데이터 수집을 거부할 수 있습니다.' },
+      ],
+    },
+  },
+  es: {
+    '/': {
+      title: 'Awesome Rank — Mapa de tamaño real, ranking global de ingresos y quiz mundial',
+      description: 'Compara el tamaño real de los países, calcula tu percentil global de ingresos y descubre tu posición entre 8 mil millones de personas.',
+      heading: 'Awesome Rank — ¿Dónde te ubicas entre 8 mil millones de personas?',
+      subheading: 'Herramientas interactivas para entender tu posición global en geografía, ingresos, estilo de vida y demografía.',
+      keywords: 'awesome rank, mapa de tamaño real, percentil global de ingresos, quiz mundial, ranking global, comparación de nivel de vida',
+      highlights: [
+        'Mapa de tamaño real con proyección de área equivalente',
+        'Calculadora de percentil de ingresos globales (PPP/MER)',
+        'Quiz World Rank de 15 preguntas',
+        'Perfil global de altura, edad y cumpleaños',
+      ],
+      bodyParagraphs: [
+        'Awesome Rank reúne herramientas gratuitas para comparar tu situación con la población mundial sin sacrificar privacidad.',
+        'Puedes analizar tamaño real de países, calcular tu posición en la distribución global de ingresos y explorar estadísticas demográficas globales.',
+      ],
+      faqs: [
+        { q: '¿Qué es Awesome Rank?', a: 'Es una plataforma interactiva para comparar estilo de vida, ingresos y métricas demográficas a escala global.' },
+        { q: '¿Se envían mis datos personales al servidor?', a: 'Los cálculos principales se realizan en tu navegador y la recolección de datos personales se minimiza.' },
+        { q: '¿Qué fuentes de datos utiliza?', a: 'Se apoya en fuentes públicas como WID.world, Natural Earth, CIA World Factbook, UN y NCD-RisC.' },
+      ],
+    },
+    '/world-rank': {
+      title: 'Quiz World Rank — ¿Dónde te ubicas entre 8 mil millones? | Awesome Rank',
+      description: 'Responde 15 preguntas para estimar tu percentil global de estilo de vida.',
+      heading: 'Quiz World Rank — Estima tu percentil global',
+      subheading: 'Un cuestionario de 15 preguntas para comparar tu nivel de vida con el mundo.',
+      keywords: 'quiz world rank, percentil global, ranking de estilo de vida, test de nivel de vida, ranking mundial',
+      highlights: [
+        '15 preguntas sobre infraestructura, conectividad y activos',
+        'Modelo probabilístico basado en estadísticas globales',
+        'Resultado inmediato con percentil y nivel',
+        'URL compartible de resultados',
+      ],
+      bodyParagraphs: [
+        'El quiz evalúa condiciones cotidianas como acceso a servicios básicos, conectividad y bienes del hogar.',
+        'Con tus respuestas, el sistema estima tu posición relativa dentro de la distribución mundial de nivel de vida.',
+      ],
+      faqs: [
+        { q: '¿Cómo se calcula el resultado?', a: 'Cada respuesta aporta evidencia con pesos basados en frecuencias globales observadas.' },
+        { q: '¿Es un resultado exacto?', a: 'Es una estimación estadística útil para comparación global, no una medición absoluta individual.' },
+        { q: '¿Puedo compartir el resultado?', a: 'Sí, puedes generar un enlace con tu resultado para compartirlo fácilmente.' },
+      ],
+    },
+    '/income-rank': {
+      title: '¿Qué tan rico soy? — Calculadora de percentil global de ingresos | Awesome Rank',
+      description: 'Ingresa tus ingresos y mira tu posición global con datos WID.world 2024. Compara en PPP y tipo de cambio de mercado.',
+      heading: '¿Qué tan rico soy? — Calculadora de percentil global de ingresos',
+      subheading: 'Descubre dónde caen tus ingresos dentro de la distribución mundial.',
+      keywords: 'qué tan rico soy, calculadora de percentil de ingresos, ingresos globales, comparación salarial mundial, PPP',
+      highlights: [
+        'Distribución global basada en WID.world 2024',
+        'Modo PPP y tipo de cambio de mercado',
+        'Ajuste por tamaño del hogar',
+        'Percentil global y clasificación por nivel de ingresos',
+      ],
+      bodyParagraphs: [
+        'Introduce tus ingresos anuales para estimar tu posición en la distribución mundial de ingresos.',
+        'Puedes alternar entre PPP para comparar poder adquisitivo y MER para comparaciones nominales en dólares.',
+      ],
+      faqs: [
+        { q: '¿Qué diferencia hay entre PPP y MER?', a: 'PPP ajusta por costo de vida; MER usa conversión de mercado sin ajuste de precios locales.' },
+        { q: '¿Se guarda mi ingreso?', a: 'La lógica principal de cálculo corre en el navegador y no requiere enviar tu ingreso personal para funcionar.' },
+        { q: '¿De dónde salen los datos?', a: 'La distribución mundial se basa en el World Inequality Database 2024.' },
+      ],
+    },
+    '/country-compare': {
+      title: 'Mapa de tamaño real — Compara tamaños reales de países | Awesome Rank',
+      description: 'Arrastra países en un mapa de área equivalente para comparar su tamaño real sin distorsión de Mercator.',
+      heading: 'Mapa de tamaño real — El tamaño real de los países',
+      subheading: 'Comparación interactiva de áreas reales con proyección de área equivalente.',
+      keywords: 'mapa de tamaño real, tamaño real de países, comparación de áreas, distorsión de Mercator, mapa equivalente',
+      highlights: [
+        'Proyección Equal Earth para preservar áreas',
+        'Comparación directa arrastrando entidades en el mapa',
+        'Comparación de países, continentes y subregiones',
+        'Tabla de ranking por superficie',
+      ],
+      bodyParagraphs: [
+        'Muchos mapas tradicionales exageran áreas en latitudes altas. Esta herramienta corrige esa distorsión.',
+        'Arrastra y superpone países para comparar su tamaño real con una referencia visual precisa.',
+      ],
+      faqs: [
+        { q: '¿Por qué Mercator distorsiona tamaños?', a: 'Mantiene ángulos para navegación, pero amplifica áreas cerca de los polos.' },
+        { q: '¿Puedo comparar regiones además de países?', a: 'Sí, puedes incluir distintas entidades geográficas según los filtros disponibles.' },
+        { q: '¿Qué proyección se utiliza?', a: 'Se utiliza una proyección de área equivalente para mantener proporciones reales de superficie.' },
+      ],
+    },
+    '/global-stats': {
+      title: 'Perfil global — Compara tu altura, edad y cumpleaños | Awesome Rank',
+      description: 'Compara tu altura, edad y fecha de nacimiento con la población mundial.',
+      heading: 'Perfil global — Tu altura, edad y cumpleaños vs. el mundo',
+      subheading: 'Introduce tus datos y obtén tu percentil global.',
+      keywords: 'percentil de altura, percentil de edad, rareza de cumpleaños, estadísticas globales, comparación mundial',
+      highlights: [
+        'Percentil de altura por país y género',
+        'Percentil de edad en la población mundial',
+        'Rareza de cumpleaños por fecha',
+        'Modelos estadísticos con datos globales',
+      ],
+      bodyParagraphs: [
+        'Compara tus datos físicos y demográficos con distribuciones poblacionales globales.',
+        'El resultado incluye percentiles e interpretaciones para entender tu posición relativa.',
+      ],
+      faqs: [
+        { q: '¿Cómo se calcula el percentil de altura?', a: 'Se utiliza un modelo de distribución con parámetros por país y género.' },
+        { q: '¿Qué significa el percentil de edad?', a: 'Indica qué proporción de la población mundial es más joven o mayor que tú.' },
+        { q: '¿Cómo se estima la rareza de cumpleaños?', a: 'Se compara la frecuencia relativa de nacimientos por fecha en conjuntos estadísticos.' },
+      ],
+    },
+    '/privacy': {
+      title: 'Política de privacidad — Awesome Rank',
+      description: 'Consulta cómo Awesome Rank recopila, usa y protege tus datos. Todos los cálculos se realizan en tu navegador.',
+      heading: 'Política de privacidad',
+      subheading: 'Nuestro compromiso con la transparencia y la protección de datos.',
+      keywords: 'política de privacidad, protección de datos, cálculos en navegador, awesome rank privacidad',
+      highlights: [
+        'Cálculos locales en el navegador',
+        'Minimización de datos personales',
+        'Consentimiento explícito para recolección opcional',
+      ],
+      bodyParagraphs: [
+        'Awesome Rank prioriza la privacidad y limita al máximo la recopilación de datos identificables.',
+        'La política describe claramente qué datos se usan, con qué propósito y bajo qué base de consentimiento.',
+      ],
+      faqs: [
+        { q: '¿Qué datos se recopilan?', a: 'Principalmente datos agregados y no sensibles para mejorar el servicio y generar estadísticas.' },
+        { q: '¿Puedo rechazar la recolección opcional?', a: 'Sí, puedes gestionar el consentimiento y rechazar la recopilación no esencial.' },
+      ],
+    },
+  },
+  pt: {
+    '/': {
+      title: 'Awesome Rank — Mapa de tamanho real, ranking global de renda e quiz mundial',
+      description: 'Compare o tamanho real dos países, calcule seu percentil global de renda e descubra sua posição entre 8 bilhões de pessoas.',
+      heading: 'Awesome Rank — Onde você está entre 8 bilhões de pessoas?',
+      subheading: 'Ferramentas interativas para revelar sua posição global em geografia, renda, estilo de vida e demografia.',
+      keywords: 'awesome rank, mapa de tamanho real, percentil global de renda, quiz mundial, ranking global, comparação de padrão de vida',
+      highlights: [
+        'Mapa de tamanho real com projeção equivalente',
+        'Calculadora de percentil global de renda (PPC/MER)',
+        'Quiz World Rank com 15 perguntas',
+        'Perfil global de altura, idade e aniversário',
+      ],
+      bodyParagraphs: [
+        'Awesome Rank oferece ferramentas gratuitas para comparar sua posição com a população mundial com foco em privacidade.',
+        'Você pode analisar tamanho real de países, posição de renda global e indicadores demográficos em uma única plataforma.',
+      ],
+      faqs: [
+        { q: 'O que é o Awesome Rank?', a: 'É uma plataforma de comparação global para estilo de vida, renda e estatísticas demográficas.' },
+        { q: 'Meus dados pessoais são enviados ao servidor?', a: 'Os cálculos principais rodam no navegador e a coleta de dados pessoais é minimizada.' },
+        { q: 'Quais fontes são usadas?', a: 'A plataforma utiliza bases públicas como WID.world, Natural Earth, CIA World Factbook, UN e NCD-RisC.' },
+      ],
+    },
+    '/world-rank': {
+      title: 'Quiz World Rank — Onde você está entre 8 bilhões? | Awesome Rank',
+      description: 'Responda 15 perguntas para estimar seu percentil global de estilo de vida.',
+      heading: 'Quiz World Rank — Estime seu percentil global',
+      subheading: 'Questionário de 15 perguntas para comparar seu padrão de vida com o restante do mundo.',
+      keywords: 'quiz world rank, percentil global, ranking de estilo de vida, teste de padrão de vida, ranking mundial',
+      highlights: [
+        '15 perguntas sobre infraestrutura, conectividade e bens',
+        'Modelo probabilístico com base em estatísticas globais',
+        'Resultado imediato com percentil e faixa',
+        'Link compartilhável de resultado',
+      ],
+      bodyParagraphs: [
+        'O quiz avalia condições do dia a dia como acesso a serviços básicos, conectividade e ativos domésticos.',
+        'As respostas são combinadas para estimar sua posição relativa na distribuição global de padrão de vida.',
+      ],
+      faqs: [
+        { q: 'Como o resultado é calculado?', a: 'Cada resposta recebe peso estatístico com base na frequência global observada.' },
+        { q: 'O resultado é exato?', a: 'É uma estimativa estatística útil para comparação, não uma medição absoluta individual.' },
+        { q: 'Posso compartilhar meu resultado?', a: 'Sim, o sistema gera URL compartilhável com o resultado calculado.' },
+      ],
+    },
+    '/income-rank': {
+      title: 'Quão rico eu sou? — Calculadora de percentil global de renda | Awesome Rank',
+      description: 'Informe sua renda e veja sua posição global com base no WID.world 2024. Compare em PPC e câmbio de mercado.',
+      heading: 'Quão rico eu sou? — Calculadora de percentil global de renda',
+      subheading: 'Descubra onde sua renda está na distribuição global.',
+      keywords: 'quão rico eu sou, calculadora de percentil de renda, renda global, comparação salarial mundial, PPC',
+      highlights: [
+        'Distribuição global com base no WID.world 2024',
+        'Modo PPC e câmbio de mercado',
+        'Ajuste por tamanho da família',
+        'Percentil global e classificação por faixa de renda',
+      ],
+      bodyParagraphs: [
+        'Informe sua renda anual para estimar sua posição na distribuição mundial de renda.',
+        'Use PPC para comparação de poder de compra ou MER para comparação nominal em dólar.',
+      ],
+      faqs: [
+        { q: 'Qual a diferença entre PPC e MER?', a: 'PPC ajusta custo de vida local; MER usa câmbio de mercado sem ajuste de preços.' },
+        { q: 'Minha renda é armazenada?', a: 'A lógica principal roda no navegador e não depende de envio obrigatório da renda pessoal.' },
+        { q: 'Quais dados fundamentam o cálculo?', a: 'A distribuição global usada vem do World Inequality Database 2024.' },
+      ],
+    },
+    '/country-compare': {
+      title: 'Mapa de tamanho real — Compare o tamanho real dos países | Awesome Rank',
+      description: 'Arraste países em um mapa de área equivalente para comparar tamanhos reais sem distorção de Mercator.',
+      heading: 'Mapa de tamanho real — Veja o tamanho real dos países',
+      subheading: 'Comparação interativa de áreas com projeção de área equivalente.',
+      keywords: 'mapa de tamanho real, tamanho real dos países, comparação de áreas, distorção de Mercator, mapa equivalente',
+      highlights: [
+        'Projeção Equal Earth para preservar área',
+        'Comparação por arraste e sobreposição no mapa',
+        'Comparação de países, continentes e sub-regiões',
+        'Ranking por área com tabela visual',
+      ],
+      bodyParagraphs: [
+        'Mapas tradicionais podem distorcer áreas em altas latitudes. Esta ferramenta corrige esse efeito.',
+        'Arraste países para sobrepor e comparar tamanhos reais de forma direta e visual.',
+      ],
+      faqs: [
+        { q: 'Por que Mercator distorce tamanhos?', a: 'A projeção preserva ângulos para navegação, mas amplia áreas próximas aos polos.' },
+        { q: 'Posso comparar outras regiões além de países?', a: 'Sim, você pode comparar diferentes entidades geográficas disponíveis nos filtros.' },
+        { q: 'Qual projeção é usada?', a: 'Uma projeção de área equivalente, para manter proporções reais de superfície.' },
+      ],
+    },
+    '/global-stats': {
+      title: 'Perfil global — Compare sua altura, idade e aniversário | Awesome Rank',
+      description: 'Compare sua altura, idade e data de nascimento com a população mundial.',
+      heading: 'Perfil global — Sua altura, idade e aniversário vs. o mundo',
+      subheading: 'Insira seus dados e descubra seu percentil global.',
+      keywords: 'percentil de altura, percentil de idade, raridade de aniversário, estatísticas globais, comparação mundial',
+      highlights: [
+        'Percentil de altura por país e gênero',
+        'Percentil de idade na população global',
+        'Raridade de aniversário por data',
+        'Modelos estatísticos com dados internacionais',
+      ],
+      bodyParagraphs: [
+        'Compare seus dados físicos e demográficos com distribuições populacionais globais.',
+        'O resultado inclui percentis e interpretações para facilitar a leitura da sua posição relativa.',
+      ],
+      faqs: [
+        { q: 'Como o percentil de altura é calculado?', a: 'É usado um modelo de distribuição com parâmetros por país e gênero.' },
+        { q: 'O que significa percentil de idade?', a: 'Mostra qual parcela da população mundial é mais jovem ou mais velha que você.' },
+        { q: 'Como a raridade de aniversário é estimada?', a: 'Compara a frequência relativa de nascimentos por data em bases estatísticas.' },
+      ],
+    },
+    '/privacy': {
+      title: 'Política de privacidade — Awesome Rank',
+      description: 'Saiba como o Awesome Rank coleta, usa e protege seus dados. Todos os cálculos rodam no navegador.',
+      heading: 'Política de privacidade',
+      subheading: 'Nosso compromisso com transparência e proteção de dados.',
+      keywords: 'política de privacidade, proteção de dados, cálculos no navegador, awesome rank privacidade',
+      highlights: [
+        'Cálculos locais no navegador',
+        'Minimização de dados pessoais',
+        'Consentimento explícito para coleta opcional',
+      ],
+      bodyParagraphs: [
+        'O Awesome Rank prioriza privacidade e reduz ao mínimo a coleta de dados identificáveis.',
+        'A política detalha com clareza quais dados são usados, finalidade e base de consentimento.',
+      ],
+      faqs: [
+        { q: 'Quais dados são coletados?', a: 'Principalmente dados agregados e não sensíveis para melhoria do serviço e estatísticas.' },
+        { q: 'Posso recusar coleta opcional?', a: 'Sim, você pode gerenciar o consentimento e recusar coleta não essencial.' },
+      ],
+    },
+  },
+};
+
+const NOT_FOUND_META = {
+  en: {
+    title: '404 Not Found — Awesome Rank',
+    description: 'The page you requested could not be found.',
+    heading: 'Page Not Found',
+    body: 'The requested page does not exist or may have moved.',
+  },
+  ko: {
+    title: '404 페이지를 찾을 수 없음 — Awesome Rank',
+    description: '요청하신 페이지를 찾을 수 없습니다.',
+    heading: '페이지를 찾을 수 없습니다',
+    body: '요청하신 페이지가 없거나 이동되었을 수 있습니다.',
+  },
+  es: {
+    title: '404 No encontrado — Awesome Rank',
+    description: 'No se pudo encontrar la página solicitada.',
+    heading: 'Página no encontrada',
+    body: 'La página solicitada no existe o pudo haber sido movida.',
+  },
+  pt: {
+    title: '404 Não encontrado — Awesome Rank',
+    description: 'A página solicitada não foi encontrada.',
+    heading: 'Página não encontrada',
+    body: 'A página solicitada não existe ou pode ter sido movida.',
+  },
+};
+
+// Redirect legacy URLs to locale-prefixed paths (/en, /ko, /es, /pt)
+app.get('*', (req, res, next) => {
+  const currentPath = normalizePath(req.path.toLowerCase());
+  if (isBypassPath(currentPath)) return next();
+
+  const { lang: pathLang, routePath } = splitLocalizedPath(currentPath);
+  const langParam = typeof req.query.lang === 'string' ? req.query.lang.toLowerCase() : null;
+  const queryLang = isSupportedLanguageCode(langParam) ? langParam : null;
+  const appParam = typeof req.query.app === 'string' ? req.query.app : null;
+  const appRoute = appParam ? mapAppToPath(appParam) : null;
+  const targetRoute = appRoute || routePath;
+
+  if (!ROUTE_META[targetRoute]) return next();
+
+  if (targetRoute === '/admin') {
+    const { params, removedTracking } = buildCanonicalParams(req.query);
+    const query = params.toString();
+    const location = query ? `/admin?${query}` : '/admin';
+    if (currentPath !== '/admin' || appRoute || queryLang || langParam || removedTracking) {
+      return res.redirect(301, location);
+    }
+    return next();
+  }
+
+  const effectiveLang = pathLang || queryLang || DEFAULT_LANGUAGE;
+  const canonicalPath = buildLocalizedPath(targetRoute, effectiveLang);
+  const { params, removedTracking } = buildCanonicalParams(req.query);
+  const query = params.toString();
+  const canonicalLocation = query ? `${canonicalPath}?${query}` : canonicalPath;
+
+  const shouldRedirect = Boolean(
+    appRoute ||
+    !pathLang ||
+    (queryLang && queryLang !== pathLang) ||
+    currentPath !== canonicalPath ||
+    langParam ||
+    removedTracking
+  );
+
+  if (shouldRedirect) {
+    return res.redirect(301, canonicalLocation);
+  }
+  return next();
+});
+
 const baseHtmlPath = join(FRONTEND_DIST, 'index.html');
 const baseHtml = existsSync(baseHtmlPath) ? readFileSync(baseHtmlPath, 'utf-8') : null;
 
@@ -261,19 +815,35 @@ function replaceTitleTag(html, title) {
   return html.replace(/<title>[^<]*<\/title>/i, `<title>${escaped}</title>`);
 }
 
+function getLanguageMeta(code) {
+  return SUPPORTED_LANGUAGES.find((item) => item.code === code) || SUPPORTED_LANGUAGES[0];
+}
+
+function replaceOgLocaleAlternates(html, currentLang) {
+  const withoutExisting = html.replace(/\s*<meta\s+property="og:locale:alternate"[^>]*>\s*/gi, '\n');
+  const alternateLines = SUPPORTED_LANGUAGES
+    .filter((item) => item.code !== currentLang)
+    .map((item) => `    <meta property="og:locale:alternate" content="${escapeHtml(item.ogLocale)}" />`)
+    .join('\n');
+
+  if (!alternateLines) return withoutExisting;
+  return withoutExisting.replace('</head>', `${alternateLines}\n  </head>`);
+}
+
 function resolveLanguage(req) {
+  const { lang: pathLang } = splitLocalizedPath(req.path);
+  if (pathLang) return pathLang;
   const langParam = typeof req.query.lang === 'string' ? req.query.lang.toLowerCase() : null;
-  const supportedCodes = new Set(SUPPORTED_LANGUAGES.map((lang) => lang.code));
-  if (langParam && supportedCodes.has(langParam)) return langParam;
+  if (isSupportedLanguageCode(langParam)) return langParam;
   const header = req.headers['accept-language'];
   if (typeof header === 'string') {
     const parts = header.split(',').map((part) => part.trim().split(';')[0]);
     for (const part of parts) {
       const primary = part.toLowerCase().split('-')[0];
-      if (supportedCodes.has(primary)) return primary;
+      if (isSupportedLanguageCode(primary)) return primary;
     }
   }
-  return 'en';
+  return DEFAULT_LANGUAGE;
 }
 
 function detectVolatileParams(req) {
@@ -292,24 +862,21 @@ function detectVolatileParams(req) {
 }
 
 function resolveRoute(req) {
-  const pathname = normalizePath(req.path.toLowerCase());
-  if (ROUTE_META[pathname]) return pathname;
+  const { routePath } = splitLocalizedPath(req.path);
+  if (ROUTE_META[routePath]) return routePath;
   const appParam = typeof req.query.app === 'string' ? req.query.app : null;
-  if (appParam === 'income-rank') return '/income-rank';
-  if (appParam === 'country-compare') return '/country-compare';
-  if (appParam === 'global-stats') return '/global-stats';
-  if (appParam === 'world-rank') return '/world-rank';
-  return '/';
+  const mapped = appParam ? mapAppToPath(appParam) : null;
+  if (mapped && ROUTE_META[mapped]) return mapped;
+  return null;
 }
 
 function buildHreflangLinks(pathname) {
   if (pathname === '/admin') return '';
-  const basePath = pathname === '/' ? '' : pathname;
   const lines = SUPPORTED_LANGUAGES.map((lang) => {
-    const href = `${SITE_URL}${basePath}?lang=${lang.code}`;
+    const href = `${SITE_URL}${buildLocalizedPath(pathname, lang.code)}`;
     return `    <link rel="alternate" hreflang="${lang.code}" href="${href}" />`;
   });
-  lines.push(`    <link rel="alternate" hreflang="x-default" href="${SITE_URL}${basePath}" />`);
+  lines.push(`    <link rel="alternate" hreflang="x-default" href="${SITE_URL}${buildLocalizedPath(pathname, DEFAULT_LANGUAGE)}" />`);
   return lines.join('\n');
 }
 
@@ -322,20 +889,14 @@ const SEO_NAV_LINKS = [
 ];
 
 function buildLocalizedHref(path, lang) {
-  if (!lang) return path;
-  const query = `lang=${encodeURIComponent(lang)}`;
-  return path === '/' ? `/?${query}` : `${path}?${query}`;
+  return buildLocalizedPath(path, lang);
 }
 
 function buildSeoContent(meta, currentPath, lang) {
+  const fallbackHighlights = routeFeatureFallback(currentPath);
   const items = Array.isArray(meta.highlights) && meta.highlights.length > 0
     ? meta.highlights
-    : [
-      'True Size Map — drag countries to compare real sizes',
-      'Global Income Calculator — find your percentile with PPP or MER',
-      'World Rank Quiz — 15 lifestyle questions for a global estimate',
-      'Global Profile — compare height, age, and birthday worldwide',
-    ];
+    : fallbackHighlights;
   const paragraphs = Array.isArray(meta.bodyParagraphs) ? meta.bodyParagraphs : [];
   const faqs = Array.isArray(meta.faqs) ? meta.faqs : [];
   const navLinks = SEO_NAV_LINKS
@@ -359,12 +920,13 @@ function buildSeoContent(meta, currentPath, lang) {
       <section class="seo-summary">
         <p>${escapeHtml(meta.description)}</p>
       </section>`}
+      ${items.length > 0 ? `
       <section class="seo-features">
         <h2>Key Features</h2>
         <ul>
           ${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
         </ul>
-      </section>
+      </section>` : ''}
       ${faqs.length > 0 ? `
       <section class="seo-faq">
         <h2>Frequently Asked Questions</h2>
@@ -381,14 +943,23 @@ function buildSeoContent(meta, currentPath, lang) {
   `.trim();
 }
 
-function buildJsonLd(meta, canonicalUrl) {
+function buildJsonLd(meta, canonicalUrl, lang, routeKey) {
+  const langMeta = getLanguageMeta(lang);
+  const inLanguage = langMeta.ogLocale.replace('_', '-');
+  const name = meta.heading || meta.title;
+  const description = meta.description;
+  const featureList = Array.isArray(meta.highlights) && meta.highlights.length > 0
+    ? meta.highlights
+    : routeFeatureFallback(routeKey);
+
   if (meta.schemaType === 'WebPage') {
     return {
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: meta.title,
-      description: meta.description,
+      name,
+      description,
       url: canonicalUrl,
+      inLanguage,
       isPartOf: {
         '@type': 'WebSite',
         name: 'Awesome Rank',
@@ -399,9 +970,10 @@ function buildJsonLd(meta, canonicalUrl) {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: meta.title,
-    description: meta.description,
+    name,
+    description,
     url: canonicalUrl,
+    inLanguage,
     applicationCategory: ['LifestyleApplication', 'FinanceApplication'],
     operatingSystem: 'Any',
     offers: {
@@ -409,13 +981,7 @@ function buildJsonLd(meta, canonicalUrl) {
       price: '0',
       priceCurrency: 'USD',
     },
-    featureList: [
-      'Global lifestyle ranking quiz with 15 questions',
-      'Income percentile calculator (PPP and MER basis)',
-      '4 language support',
-      'On-device calculation for privacy',
-      'Based on WID.world 2024 data',
-    ],
+    featureList,
     author: {
       '@type': 'Organization',
       name: 'Awesome Rank',
@@ -432,18 +998,62 @@ function stringifyJsonForScript(value) {
     .replace(/\u2029/g, '\\u2029');
 }
 
+function buildLocalizedMeta(routeKey, baseMeta, lang) {
+  const langOverrides = LOCALIZED_META_OVERRIDES[lang];
+  const routeOverrides = langOverrides && routeKey ? langOverrides[routeKey] : null;
+  if (!routeOverrides) return baseMeta;
+  return {
+    ...baseMeta,
+    ...routeOverrides,
+  };
+}
+
+function renderNotFoundHtml(req) {
+  if (!baseHtml) return null;
+  const lang = resolveLanguage(req);
+  const langMeta = getLanguageMeta(lang);
+  const localized = NOT_FOUND_META[lang] || NOT_FOUND_META.en;
+  const requestPath = normalizePath(req.path.toLowerCase());
+  const canonicalPath = requestPath || '/';
+  const canonicalUrl = `${SITE_URL}${canonicalPath}`;
+
+  let html = baseHtml;
+  html = html.replace(/<html lang="[^"]*"/i, `<html lang="${lang}"`);
+  html = replaceTitleTag(html, localized.title);
+  html = replaceMetaName(html, 'title', localized.title);
+  html = replaceMetaName(html, 'description', localized.description);
+  html = replaceMetaName(html, 'robots', 'noindex,nofollow');
+  html = replaceLinkCanonical(html, canonicalUrl);
+  html = replaceMetaProperty(html, 'og:url', canonicalUrl);
+  html = replaceMetaProperty(html, 'og:title', localized.title);
+  html = replaceMetaProperty(html, 'og:description', localized.description);
+  html = replaceMetaProperty(html, 'og:locale', langMeta.ogLocale);
+  html = replaceOgLocaleAlternates(html, lang);
+  html = replaceMetaName(html, 'twitter:url', canonicalUrl);
+  html = replaceMetaName(html, 'twitter:title', localized.title);
+  html = replaceMetaName(html, 'twitter:description', localized.description);
+  html = html.replace(
+    '<div id="root"></div>',
+    `<div id="root"><main class="seo-shell"><header class="seo-hero"><h1>${escapeHtml(localized.heading)}</h1><p>${escapeHtml(localized.body)}</p></header></main></div>`,
+  );
+  // Keep 404 page static: avoid client hydration replacing content with app home.
+  html = html.replace(/<script\b[^>]*type="module"[^>]*>[\s\S]*?<\/script>/gi, '');
+  return html;
+}
+
 function renderSeoHtml(req) {
   if (!baseHtml) return null;
   const routeKey = resolveRoute(req);
-  const meta = ROUTE_META[routeKey] || ROUTE_META['/'];
+  if (!routeKey) return null;
+  const baseMeta = ROUTE_META[routeKey];
+  if (!baseMeta) return null;
   const lang = resolveLanguage(req);
-  const langMeta = SUPPORTED_LANGUAGES.find((item) => item.code === lang) || SUPPORTED_LANGUAGES[0];
-  const pathForCanonical = routeKey === '/' ? '' : routeKey;
-  const langParam = typeof req.query.lang === 'string' ? req.query.lang.toLowerCase() : null;
-  const canonicalBase = langParam && langParam === lang
-    ? `${SITE_URL}${pathForCanonical}?lang=${lang}`
-    : `${SITE_URL}${pathForCanonical}`;
-  const canonicalUrl = canonicalBase;
+  const meta = buildLocalizedMeta(routeKey, baseMeta, lang);
+  const langMeta = getLanguageMeta(lang);
+  const canonicalPath = routeKey === '/admin'
+    ? '/admin'
+    : buildLocalizedPath(routeKey, lang);
+  const canonicalUrl = `${SITE_URL}${canonicalPath}`;
   const ogLocale = langMeta.ogLocale;
   const robots = detectVolatileParams(req)
     ? 'noindex, follow'
@@ -479,7 +1089,7 @@ function renderSeoHtml(req) {
   }
 
   const seoContent = buildSeoContent(dynamicMeta, routeKey, lang);
-  const jsonLd = buildJsonLd(dynamicMeta, canonicalUrl);
+  const jsonLd = buildJsonLd(dynamicMeta, canonicalUrl, lang, routeKey);
 
   let html = baseHtml;
   html = html.replace(/<html lang="[^"]*"/i, `<html lang="${lang}"`);
@@ -494,6 +1104,7 @@ function renderSeoHtml(req) {
   html = replaceMetaProperty(html, 'og:title', dynamicMeta.title);
   html = replaceMetaProperty(html, 'og:description', dynamicMeta.description);
   html = replaceMetaProperty(html, 'og:locale', ogLocale);
+  html = replaceOgLocaleAlternates(html, lang);
   html = replaceMetaName(html, 'twitter:url', canonicalUrl);
   html = replaceMetaName(html, 'twitter:title', dynamicMeta.title);
   html = replaceMetaName(html, 'twitter:description', dynamicMeta.description);
@@ -1027,6 +1638,17 @@ app.get('/api/stats/income-summary', async (req, res) => {
 
 // SPA fallback with SEO-friendly HTML
 app.get('*', (req, res) => {
+  const routeKey = resolveRoute(req);
+  if (!routeKey) {
+    const notFoundHtml = renderNotFoundHtml(req);
+    if (notFoundHtml) {
+      res.status(404).set('Content-Type', 'text/html');
+      res.send(notFoundHtml);
+      return;
+    }
+    res.status(404).send('Not Found');
+    return;
+  }
   const html = renderSeoHtml(req);
   if (html) {
     res.set('Content-Type', 'text/html');

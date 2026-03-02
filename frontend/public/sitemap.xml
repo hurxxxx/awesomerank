@@ -2,69 +2,69 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://awesomerank.com</loc>
+    <loc>https://awesomerank.com/en</loc>
     <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/?lang=es"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/?lang=pt"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/en"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/ko"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/es"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/pt"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/en"/>
   </url>
   <url>
-    <loc>https://awesomerank.com/world-rank</loc>
+    <loc>https://awesomerank.com/en/world-rank</loc>
     <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/world-rank?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/world-rank?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/world-rank?lang=es"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/world-rank?lang=pt"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/world-rank"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/en/world-rank"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/ko/world-rank"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/es/world-rank"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/pt/world-rank"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/en/world-rank"/>
   </url>
   <url>
-    <loc>https://awesomerank.com/income-rank</loc>
+    <loc>https://awesomerank.com/en/income-rank</loc>
     <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/income-rank?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/income-rank?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/income-rank?lang=es"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/income-rank?lang=pt"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/income-rank"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/en/income-rank"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/ko/income-rank"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/es/income-rank"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/pt/income-rank"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/en/income-rank"/>
   </url>
   <url>
-    <loc>https://awesomerank.com/country-compare</loc>
+    <loc>https://awesomerank.com/en/country-compare</loc>
     <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/country-compare?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/country-compare?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/country-compare?lang=es"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/country-compare?lang=pt"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/country-compare"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/en/country-compare"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/ko/country-compare"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/es/country-compare"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/pt/country-compare"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/en/country-compare"/>
   </url>
   <url>
-    <loc>https://awesomerank.com/global-stats</loc>
+    <loc>https://awesomerank.com/en/global-stats</loc>
     <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/global-stats?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/global-stats?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/global-stats?lang=es"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/global-stats?lang=pt"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/global-stats"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/en/global-stats"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/ko/global-stats"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/es/global-stats"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/pt/global-stats"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/en/global-stats"/>
   </url>
   <url>
-    <loc>https://awesomerank.com/privacy</loc>
+    <loc>https://awesomerank.com/en/privacy</loc>
     <lastmod>2026-03-02</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/privacy?lang=en"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/privacy?lang=ko"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/privacy?lang=es"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/privacy?lang=pt"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/privacy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://awesomerank.com/ko/privacy"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://awesomerank.com/es/privacy"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://awesomerank.com/pt/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://awesomerank.com/en/privacy"/>
   </url>
 </urlset>

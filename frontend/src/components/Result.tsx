@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { questions } from '../data/questions';
 import { getQuestionDetails } from '../data/questionDetails';
 import { calculateScore, getTierInfo } from '../utils/scoreCalculator';
+import { buildLocalizedPath } from '../utils/localePath';
 import './Result.css';
 
 interface ResultProps {
@@ -53,10 +54,11 @@ export const Result = ({ answers, sharedScore, onRestart }: ResultProps) => {
 
     const handleShare = async () => {
         // Build share URL with score parameter
-        const baseUrl = `${window.location.origin}/world-rank`;
+        const language = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0].toLowerCase();
+        const basePath = buildLocalizedPath('/world-rank', language);
+        const baseUrl = `${window.location.origin}${basePath}`;
         const params = new URLSearchParams();
         params.set('score', String(score));
-        params.set('lang', i18n.language);
         const shareUrl = `${baseUrl}?${params.toString()}`;
 
         const shareData = {

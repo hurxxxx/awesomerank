@@ -5,6 +5,7 @@
     "dev": "cd frontend && npm run dev",
     "dev:all": "concurrently \"npm run dev\" \"npm run server:dev\"",
     "build": "cd frontend && npm run build",
+    "seo:check": "node ./scripts/seo-smoke.mjs",
     "start": "cd server && npm start",
     "server:dev": "cd server && npm run dev",
     "install:all": "cd frontend && npm install --legacy-peer-deps && cd ../server && npm install"

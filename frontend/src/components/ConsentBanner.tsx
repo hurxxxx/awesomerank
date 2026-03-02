@@ -1,12 +1,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useConsent } from '../contexts/useConsent';
+import { buildLocalizedPath } from '../utils/localePath';
 import './ConsentBanner.css';
 
 export function ConsentBanner() {
   const { t, i18n } = useTranslation();
   const { consent, isConsentRequired, isOptInRegion, acceptConsent, rejectConsent } = useConsent();
-  const privacyHref = i18n.language ? `/privacy?lang=${i18n.language}` : '/privacy';
+  const language = (i18n.resolvedLanguage || i18n.language || 'en').split('-')[0].toLowerCase();
+  const privacyHref = buildLocalizedPath('/privacy', language);
 
   // Don't show if consent already given
   if (!isConsentRequired) {
