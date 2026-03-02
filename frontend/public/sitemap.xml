@@ -3,7 +3,7 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://awesomerank.com</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/?lang=en"/>
@@ -14,7 +14,7 @@
   </url>
   <url>
     <loc>https://awesomerank.com/world-rank</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/world-rank?lang=en"/>
@@ -25,7 +25,7 @@
   </url>
   <url>
     <loc>https://awesomerank.com/income-rank</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/income-rank?lang=en"/>
@@ -36,7 +36,7 @@
   </url>
   <url>
     <loc>https://awesomerank.com/country-compare</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/country-compare?lang=en"/>
@@ -47,7 +47,7 @@
   </url>
   <url>
     <loc>https://awesomerank.com/global-stats</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-03-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/global-stats?lang=en"/>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://awesomerank.com/privacy</loc>
-    <lastmod>2026-02-23</lastmod>
+    <lastmod>2026-03-02</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://awesomerank.com/privacy?lang=en"/>

@@ -38,7 +38,7 @@ app.get('*', (req, res, next) => {
   res.redirect(301, location);
 });
 
-app.use(express.static(FRONTEND_DIST));
+app.use(express.static(FRONTEND_DIST, { index: false }));
 
 const SITE_URL = process.env.SITE_URL || 'https://awesomerank.com';
 const SUPPORTED_LANGUAGES = [
@@ -65,112 +65,136 @@ function mapAppToPath(appId) {
 
 const ROUTE_META = {
   '/': {
-    title: 'Awesome Rank — Explore the world through data',
-    description: 'Take the World Rank lifestyle quiz, calculate your global income percentile, and explore world statistics.',
-    heading: 'Awesome Rank',
-    subheading: 'Explore the world through data: lifestyle quiz, income ranking, and global statistics.',
-    keywords: 'awesome rank, world rank, global ranking, lifestyle quiz, income ranking, income percentile, standard of living, world statistics, country size compare, global data',
+    title: 'Awesome Rank — True Size Map, Global Income Rank & World Quiz',
+    description: 'Compare true country sizes on an equal-area map, calculate your global income percentile, and discover where you rank among 8 billion people.',
+    heading: 'Awesome Rank — Where Do You Stand Among 8 Billion People?',
+    subheading: 'Interactive data tools that reveal your place in the world through geography, income, lifestyle, and demographics.',
+    keywords: 'awesome rank, true size map, true size of countries, how rich am I, income percentile calculator, global ranking, world rank quiz, country size comparison, global income percentile, living standard calculator',
     highlights: [
-      'World Rank lifestyle quiz',
-      'Living Standard income ranking (PPP and MER)',
-      'Country Size Compare map',
-      'Global Statistics profile',
+      'True Size Map — drag countries on an equal-area projection to compare real sizes',
+      'Global Income Calculator — find your percentile using PPP or market exchange rates',
+      'World Rank Quiz — 15 lifestyle questions that estimate your global standing',
+      'Global Profile — compare your height, age, and birthday worldwide',
     ],
-    searchPhrases: [
-      'global ranking quiz',
-      'income percentile calculator',
-      'standard of living comparison',
-      'world statistics dashboard',
-      'country size comparison map',
+    bodyParagraphs: [
+      'Awesome Rank is a suite of free, privacy-first data tools that let you explore how you compare to the rest of the world. Every calculation runs entirely in your browser — no personal data is ever sent to a server.',
+      'Explore the True Size Map to see how Mercator projection distorts country sizes, use the income calculator powered by the World Inequality Database 2024, take the lifestyle quiz to discover your global percentile, or check how your height and age stack up worldwide.',
+    ],
+    faqs: [
+      { q: 'What is Awesome Rank?', a: 'Awesome Rank is a collection of free interactive tools that show where you stand among 8 billion people — through income ranking, lifestyle quizzes, true-size country maps, and global demographic comparisons.' },
+      { q: 'Is my personal data safe?', a: 'Yes. All calculations happen entirely in your browser. Your income, quiz answers, and personal stats are never transmitted to any server. The app ships with all data embedded.' },
+      { q: 'What data sources does Awesome Rank use?', a: 'Income data comes from the World Inequality Database (WID.world) 2024 edition. Country boundaries and areas use Natural Earth and CIA World Factbook data. Height and demographic statistics are sourced from the UN Population Division and NCD-RisC.' },
     ],
     schemaType: 'WebApplication',
   },
   '/world-rank': {
-    title: 'World Rank — Global Lifestyle Quiz',
-    description: 'Answer a 15-question lifestyle quiz for a modeled estimate of where you stand among 8 billion people worldwide.',
-    heading: 'World Rank',
-    subheading: 'A lifestyle quiz that estimates your global standing across everyday living standards.',
-    keywords: 'world rank, lifestyle quiz, global ranking, living standards, world percentile, global lifestyle index',
+    title: 'World Rank Quiz — Where Do You Stand Among 8 Billion? | Awesome Rank',
+    description: 'Answer 15 lifestyle questions to estimate your global percentile. Compare your living standard across infrastructure, connectivity, and assets worldwide.',
+    heading: 'World Rank Quiz — Estimate Your Global Lifestyle Percentile',
+    subheading: 'A 15-question quiz that measures your everyday living standards against the rest of the world.',
+    keywords: 'world rank quiz, global lifestyle ranking, living standard test, where do I rank, global percentile quiz, lifestyle comparison, world percentile, standard of living quiz, global ranking test',
     highlights: [
-      '15 lifestyle questions',
-      'Instant global ranking estimate',
-      'Private, on-device calculation',
+      '15 questions across infrastructure, connectivity, and assets',
+      'Bayesian probability scoring with real-world data',
+      'Instant global percentile and tier badge',
+      'Shareable results via URL',
+      'Private — calculated entirely on your device',
     ],
-    searchPhrases: [
-      'world rank quiz',
-      'global lifestyle ranking',
-      'living standards questionnaire',
-      'global percentile test',
+    bodyParagraphs: [
+      'The World Rank Quiz asks 15 carefully weighted questions about your everyday life — from electricity and clean water access to smartphone ownership and housing type. Each answer is scored using Bayesian probability based on real global statistics.',
+      'Your final result places you on a global percentile scale and assigns a tier badge from "Baseline" to "Visionary Elite." The entire calculation happens in your browser — your answers never leave your device.',
+    ],
+    faqs: [
+      { q: 'How is my world rank calculated?', a: 'Each of the 15 questions is weighted by its real-world global probability. For example, 89% of humans have electricity access, but only 40% own a washing machine. Your answers are combined using Bayesian scoring to estimate a global percentile.' },
+      { q: 'What does the quiz measure?', a: 'The quiz measures three dimensions of everyday living standards: Infrastructure (electricity, sanitation, clean water), Connectivity (internet, smartphone, broadband), and Assets (refrigerator, washing machine, housing type).' },
+      { q: 'Is the result accurate?', a: 'The result is a modeled estimate based on global statistics, not an exact measurement. It provides a meaningful approximation of where your lifestyle falls on the global spectrum.' },
     ],
     schemaType: 'WebApplication',
   },
   '/income-rank': {
-    title: 'Living Standard Rank — Global Income Percentile',
-    description: 'Calculate your global income percentile with PPP or market exchange rates.',
-    heading: 'Living Standard Rank',
-    subheading: 'Compare household income worldwide using PPP and market exchange rates.',
-    keywords: 'income rank, income percentile, PPP calculator, MER calculator, global income comparison, salary percentile, living standard',
+    title: 'How Rich Am I? — Global Income Percentile Calculator | Awesome Rank',
+    description: 'Enter your income and see where you stand among 8 billion people. Based on World Inequality Database 2024 with PPP and market exchange rate comparisons.',
+    heading: 'How Rich Am I? — Global Income Percentile Calculator',
+    subheading: 'Find out where your income falls in the worldwide distribution using the latest World Inequality Database.',
+    keywords: 'how rich am I, global income percentile, income percentile calculator, income comparison worldwide, salary rank global, world income distribution, PPP calculator, living standard rank, global wealth comparison, income percentile by country',
     highlights: [
-      'Income percentile with PPP and MER',
-      'Household size adjustments',
-      'Global median and milestones',
+      'Based on World Inequality Database (WID.world) 2024',
+      'Two modes: PPP-adjusted and market exchange rates',
+      'Household size correction for adults and children',
+      'Global percentile, top-X%, and income class',
+      'Every currency supported with automatic conversion',
     ],
-    searchPhrases: [
-      'income percentile calculator',
-      'PPP income comparison',
-      'global salary percentile',
-      'standard of living income rank',
+    bodyParagraphs: [
+      'Enter your annual household income to discover exactly where you fall in the global income distribution. The calculator uses the World Inequality Database 2024 edition — the gold standard for international income comparisons.',
+      'Choose between PPP (Purchasing Power Parity), which adjusts for local cost of living, or MER (Market Exchange Rates) for raw dollar comparisons. Adjust for household size to get a more accurate per-capita figure. Results show your global percentile, how many people earn more or less, and which income class you belong to.',
+    ],
+    faqs: [
+      { q: 'How rich am I compared to the rest of the world?', a: 'Enter your annual income in any currency, and the calculator converts it to international dollars using the latest exchange rates. It then compares your income against the global distribution from the World Inequality Database to show your exact percentile.' },
+      { q: 'What is the difference between PPP and market exchange rates?', a: 'PPP (Purchasing Power Parity) adjusts for the cost of living in each country — $1 buys more in India than in Switzerland. Market Exchange Rates (MER) use raw currency conversion without adjustment. PPP is better for comparing living standards; MER is better for comparing absolute purchasing power internationally.' },
+      { q: 'What is the global median income?', a: 'According to WID.world 2024 data, the global median income is approximately $3,920 per year in PPP terms. This means half the world earns less than about $10.70 per day.' },
+      { q: 'Is my income data sent to a server?', a: 'No. The entire calculation runs in your browser using pre-loaded distribution data. Your income figure is never transmitted anywhere.' },
     ],
     schemaType: 'WebApplication',
   },
   '/country-compare': {
-    title: 'Country Size Compare — True Size Atlas',
-    description: 'Compare true country sizes with an interactive map and global rankings.',
-    heading: 'Country Size Compare',
-    subheading: 'See how countries stack up in real size with a true-size map.',
-    keywords: 'country size compare, true size map, world map comparison, area comparison, country size ranking',
+    title: 'True Size Map — Compare Real Country Sizes | Awesome Rank',
+    description: 'Drag countries on an equal-area map to compare their real sizes. The Mercator projection distorts — see how big Africa, Russia, and Greenland truly are.',
+    heading: 'True Size Map — See How Big Countries Really Are',
+    subheading: 'An interactive equal-area map that reveals true country sizes without Mercator distortion.',
+    keywords: 'true size map, true size of countries, real size of countries, country size comparison, mercator projection distortion, how big is africa, compare country sizes, equal area map, true size atlas, country area comparison, drag countries on map',
     highlights: [
-      'True-size map view',
-      'Country area rankings',
-      'Side-by-side comparisons',
+      'Equal Earth projection — no size distortion anywhere on the map',
+      'Compare up to 10 countries, continents, or states simultaneously',
+      'Drag entities across the map to overlay and compare directly',
+      'Switch between 110m overview and 10m high-detail coastlines',
+      'Area ranking table with CIA World Factbook data',
+      'Proportional area blocks for instant visual comparison',
     ],
-    searchPhrases: [
-      'true size world map',
-      'country area comparison',
-      'map size distortion',
-      'compare countries by size',
+    bodyParagraphs: [
+      'Most world maps use the Mercator projection, created in 1569 for maritime navigation. While great for plotting ship courses, Mercator dramatically inflates areas near the poles: Greenland appears the size of Africa, even though Africa is 14 times larger. Russia looks bigger than the entire continent of Africa, when in reality Africa is larger.',
+      'True Size Map uses the Equal Earth projection, which preserves area accuracy across the entire map. Select any combination of countries, continents, subregions, or individual states and provinces — up to 10 at once — and drag them across the map to compare directly. Each entity is drawn at its true proportional area, so what you see is what you get.',
+      'Search in any language, zoom from 0.6x to 40x, switch between quick 110m and detailed 10m resolution, and view a live area ranking table with official statistics from the CIA World Factbook.',
+    ],
+    faqs: [
+      { q: 'Why do countries look different sizes on a regular map?', a: 'Most world maps use the Mercator projection, which preserves angles for navigation but dramatically distorts sizes. Areas near the poles are stretched to appear much larger than they really are. For example, Greenland looks as big as Africa on Mercator maps, but Africa is actually 14 times larger (30.4 million km² vs 2.2 million km²).' },
+      { q: 'How big is Africa really?', a: 'Africa is 30.37 million km² — larger than the United States, China, India, and most of Europe combined. On a Mercator map, Africa appears roughly the same size as Greenland, but in reality Africa is about 14 times larger.' },
+      { q: 'Can I compare states and provinces, not just countries?', a: 'Yes. Use the tag filters in the search bar to switch between countries, continents, subregions, and states/provinces. You can compare Texas to France, or California to Japan — any combination of up to 10 entities at once.' },
+      { q: 'What is the Equal Earth projection?', a: 'Equal Earth is a map projection created in 2018 that shows all areas at their correct relative sizes while still looking visually pleasing. Unlike Mercator, every square kilometer on the map represents the same amount of real-world area, making it ideal for comparing country sizes.' },
     ],
     schemaType: 'WebApplication',
   },
   '/global-stats': {
-    title: 'Global Statistics — Your Global Profile',
-    description: 'Explore global statistics and build a profile across income, education, and access.',
-    heading: 'Global Statistics',
-    subheading: 'Build a global profile across key indicators and world data.',
-    keywords: 'global statistics, global profile, world data, demographics, global indicators, world comparison',
+    title: 'Global Profile — Compare Your Height, Age & Birthday Worldwide | Awesome Rank',
+    description: 'See how your height, age, and birthday compare with 8 billion people. Get your global percentile for each stat.',
+    heading: 'Global Profile — Your Height, Age & Birthday vs. the World',
+    subheading: 'Enter your stats and discover your percentile among 8 billion people.',
+    keywords: 'height percentile by country, age percentile world, birthday rarity, global demographics, how tall am I compared to the world, average height by country, global age distribution, birthday popularity, height comparison global',
     highlights: [
-      'Global profile summary',
-      'Demographics and access indicators',
-      'Shareable insights',
+      'Height percentile by gender and country',
+      'Age percentile among 8 billion people',
+      'Birthday rarity — how common or rare your birth date is',
+      'Statistical distribution data from UN and NCD-RisC',
     ],
-    searchPhrases: [
-      'global statistics profile',
-      'world data dashboard',
-      'global demographics overview',
-      'international comparisons',
+    bodyParagraphs: [
+      'Global Profile lets you compare your physical and demographic stats against the entire world population. Enter your height to see your percentile by gender and country, check how your age compares to the global distribution, and discover how rare or common your birthday is.',
+      'All data is sourced from the UN Population Division and NCD-RisC research databases. Calculations are instant and run entirely in your browser.',
+    ],
+    faqs: [
+      { q: 'How is my height percentile calculated?', a: 'Your height is compared against statistical distribution data for your gender and country, sourced from NCD-RisC. The calculator uses a normal distribution model with country-specific mean heights and standard deviations to determine your exact percentile.' },
+      { q: 'What data sources are used for global statistics?', a: 'Height data comes from NCD-RisC (Non-Communicable Diseases Risk Factor Collaboration). Age and population data comes from the UN Population Division. Birthday frequency data is compiled from multiple national statistical agencies.' },
     ],
     schemaType: 'WebApplication',
   },
   '/privacy': {
     title: 'Privacy Policy — Awesome Rank',
-    description: 'Learn how Awesome Rank collects, uses, and protects your data.',
+    description: 'Learn how Awesome Rank collects, uses, and protects your data. All calculations run in your browser.',
     heading: 'Privacy Policy',
     subheading: 'Our commitment to transparency, privacy, and data protection.',
-    keywords: 'privacy policy, data protection, awesome rank, data usage, consent',
+    keywords: 'privacy policy, data protection, awesome rank, data usage, consent, browser-only calculation',
     highlights: [
-      'What data is collected',
-      'How data is used',
-      'How to opt out',
+      'All calculations run in your browser',
+      'No personal data transmitted to servers',
+      'Optional analytics with explicit consent only',
     ],
     schemaType: 'WebPage',
   },
@@ -289,40 +313,69 @@ function buildHreflangLinks(pathname) {
   return lines.join('\n');
 }
 
-function buildSeoContent(meta) {
+const SEO_NAV_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/country-compare', label: 'True Size Map' },
+  { href: '/income-rank', label: 'Income Percentile Calculator' },
+  { href: '/world-rank', label: 'World Rank Quiz' },
+  { href: '/global-stats', label: 'Global Profile' },
+];
+
+function buildLocalizedHref(path, lang) {
+  if (!lang) return path;
+  const query = `lang=${encodeURIComponent(lang)}`;
+  return path === '/' ? `/?${query}` : `${path}?${query}`;
+}
+
+function buildSeoContent(meta, currentPath, lang) {
   const items = Array.isArray(meta.highlights) && meta.highlights.length > 0
     ? meta.highlights
     : [
-      'World Rank lifestyle quiz',
-      'Living Standard income ranking (PPP and MER)',
-      'Country Size Compare map',
-      'Global Statistics profile',
+      'True Size Map — drag countries to compare real sizes',
+      'Global Income Calculator — find your percentile with PPP or MER',
+      'World Rank Quiz — 15 lifestyle questions for a global estimate',
+      'Global Profile — compare height, age, and birthday worldwide',
     ];
-  const phrases = Array.isArray(meta.searchPhrases) && meta.searchPhrases.length > 0
-    ? meta.searchPhrases
-    : [];
+  const paragraphs = Array.isArray(meta.bodyParagraphs) ? meta.bodyParagraphs : [];
+  const faqs = Array.isArray(meta.faqs) ? meta.faqs : [];
+  const navLinks = SEO_NAV_LINKS
+    .filter((link) => link.href !== currentPath)
+    .map((link) => {
+      const href = buildLocalizedHref(link.href, lang);
+      return `<li><a href="${escapeHtml(href)}">${escapeHtml(link.label)}</a></li>`;
+    })
+    .join('');
+
   return `
     <main class="seo-shell">
       <header class="seo-hero">
         <h1>${escapeHtml(meta.heading)}</h1>
         <p>${escapeHtml(meta.subheading)}</p>
       </header>
+      ${paragraphs.length > 0 ? `
+      <section class="seo-about">
+        ${paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
+      </section>` : `
       <section class="seo-summary">
         <p>${escapeHtml(meta.description)}</p>
-      </section>
+      </section>`}
       <section class="seo-features">
-        <h2>Highlights</h2>
+        <h2>Key Features</h2>
         <ul>
           ${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}
         </ul>
       </section>
-      ${phrases.length > 0 ? `
-      <section class="seo-related">
-        <h2>Related searches</h2>
-        <ul>
-          ${phrases.map((phrase) => `<li>${escapeHtml(phrase)}</li>`).join('')}
-        </ul>
+      ${faqs.length > 0 ? `
+      <section class="seo-faq">
+        <h2>Frequently Asked Questions</h2>
+        <dl>
+          ${faqs.map((faq) => `<dt>${escapeHtml(faq.q)}</dt><dd>${escapeHtml(faq.a)}</dd>`).join('')}
+        </dl>
       </section>` : ''}
+      <nav class="seo-nav">
+        <h2>Explore More</h2>
+        <ul>${navLinks}</ul>
+      </nav>
       <noscript>JavaScript is required for the interactive experience. The overview above is available without scripts.</noscript>
     </main>
   `.trim();
@@ -370,6 +423,15 @@ function buildJsonLd(meta, canonicalUrl) {
   };
 }
 
+function stringifyJsonForScript(value) {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
 function renderSeoHtml(req) {
   if (!baseHtml) return null;
   const routeKey = resolveRoute(req);
@@ -406,7 +468,8 @@ function renderSeoHtml(req) {
     const parsedIncome = incomeValue ? Number.parseFloat(incomeValue) : null;
     if (Number.isFinite(parsedIncome) && parsedIncome > 0) {
       const formattedIncome = new Intl.NumberFormat(lang, { maximumSignificantDigits: 4 }).format(parsedIncome);
-      const basis = typeof req.query.basis === 'string' ? req.query.basis : null;
+      const basisValue = typeof req.query.basis === 'string' ? req.query.basis.toUpperCase() : null;
+      const basis = basisValue === 'PPP' || basisValue === 'MER' ? basisValue : null;
       dynamicMeta = {
         ...dynamicMeta,
         title: `Income Rank Result — ${formattedIncome}${basis ? ` (${basis})` : ''}`,
@@ -415,7 +478,7 @@ function renderSeoHtml(req) {
     }
   }
 
-  const seoContent = buildSeoContent(dynamicMeta);
+  const seoContent = buildSeoContent(dynamicMeta, routeKey, lang);
   const jsonLd = buildJsonLd(dynamicMeta, canonicalUrl);
 
   let html = baseHtml;
@@ -435,7 +498,7 @@ function renderSeoHtml(req) {
   html = replaceMetaName(html, 'twitter:title', dynamicMeta.title);
   html = replaceMetaName(html, 'twitter:description', dynamicMeta.description);
 
-  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/i, `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`);
+  html = html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/i, `<script type="application/ld+json">${stringifyJsonForScript(jsonLd)}</script>`);
   html = html.replace('<div id="root"></div>', `<div id="root">${seoContent}</div>`);
   if (hreflangLinks) {
     html = html.replace('</head>', `${hreflangLinks}\n  </head>`);
